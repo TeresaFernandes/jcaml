@@ -6,7 +6,7 @@ package userInterface;
 import java.util.LinkedList;
 
 import CommonClasses.Lexem;
-import CommonClasses.LexicalError;
+import CommonClasses.Error;
 
 import symbolTable.Table;
 
@@ -33,7 +33,7 @@ public class Main {
 				Lexem x = l.get(a);
 				System.out.println(x.getLex() + "\t" + x.getId());
 			}
-		} catch (LexicalError e) {
+		} catch (Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

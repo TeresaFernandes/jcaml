@@ -1,16 +1,16 @@
 package CommonClasses;
 
 @SuppressWarnings("serial")
-public class LexicalError extends Exception {
+public class Error extends Exception {
 	private int id;
 	private int lineId;
 	private String extraMsg;
 	
-	public LexicalError(int id, int lineId) {
+	public Error(int id, int lineId) {
 		this.id = id;
 		this.lineId = lineId;
 	}
-	public LexicalError(int id) {
+	public Error(int id) {
 		this.id = id;
 	}
 	

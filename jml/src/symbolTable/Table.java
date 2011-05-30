@@ -2,7 +2,7 @@ package symbolTable;
 
 import java.util.LinkedList;
 
-import CommonClasses.LexicalError;
+import CommonClasses.Error;
 
 
 public class Table {
@@ -16,7 +16,7 @@ public class Table {
 	 * Insert name in symbol table
 	 * @param name Variable's name
 	 */
-	public void insertElement(String name) throws LexicalError {
+	public void insertElement(String name) throws Error {
 		Variable v = new Variable(name);
 		table.add(v);
 	}
@@ -26,7 +26,7 @@ public class Table {
 	 * @param name Variable's name
 	 * @return Object
 	 */
-	public Variable getElement(String name) throws LexicalError {
+	public Variable getElement(String name) throws Error {
 		// TODO tudo
 		return null; 
 	}
@@ -35,7 +35,7 @@ public class Table {
 	 * Update an object
 	 * @param updatedObject Updated object
 	 */
-	public void updateObject(Object updatedObject) throws LexicalError {
+	public void updateObject(Object updatedObject) throws Error {
 		// TODO tudo
 	}
 	

@@ -20,7 +20,7 @@ public class Lexem {
 		return true;
 	}
 	
-	public void evalue() throws LexicalError {
+	public void evalue() throws Error {
 		// Palavras reservadas
 		if (lex.compareToIgnoreCase("let")==0) { id = LexemId.KEYWORD_LET; return; }
 		else if (lex.compareToIgnoreCase("in")==0) { id = LexemId.KEYWORD_IN; return; }
@@ -89,7 +89,7 @@ public class Lexem {
 			Float.parseFloat(lex); // O parse int detecta parse float =D
 		} catch (NumberFormatException e) {
 			id = LexemId.NAME; // Se não for possível passar pra numéric, é um nome
-			LexicalError lerror = new LexicalError(2);
+			Error lerror = new Error(2);
 			lerror.setExtra(": " +lex);
 			if (!validName()) throw lerror;
 			return;

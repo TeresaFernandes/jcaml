@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 import CommonClasses.Lexem;
 import CommonClasses.LexemId;
-import CommonClasses.LexicalError;
+import CommonClasses.Error;
 
 import symbolTable.Table;
 
@@ -63,9 +63,9 @@ public class Analyzer {
 
 	/**
 	 * @returns 
-	 * @throws LexicalError if exists any lexical invalid
+	 * @throws Error if exists any lexical invalid
 	 */
-	static private int getEndOfLexem(String s) throws LexicalError {
+	static private int getEndOfLexem(String s) throws Error {
 		if (s.startsWith("::")
 			|| s.startsWith("~-")
 			|| s.startsWith("->")
@@ -102,18 +102,18 @@ public class Analyzer {
 			|| s.startsWith(">")) return 0;
 		
 		if (s.startsWith("'")) { // Reconhecer char
-			LexicalError lerror;
+			Error lerror;
 			if (s.startsWith("''") && !s.startsWith("'''")) return 1; // Char vazio
 			else if (s.startsWith("'\\")){
 				if ((s.charAt(3)=='\'') && (s.length()==4)) return 3;
 				else {
-					lerror = new LexicalError(3);
+					lerror = new Error(3);
 					lerror.setExtra(" after "+ s);
 					throw lerror;
 				}
 			}
 			else if (s.charAt(2)!='\'') { 
-				lerror = new LexicalError(3);
+				lerror = new Error(3);
 				lerror.setExtra(" after "+ s.charAt(0) + s.charAt(1));
 				throw lerror;
 			}
@@ -127,7 +127,7 @@ public class Analyzer {
 				if (a<s.length()-1 && s.charAt(a)=='\\' && s.charAt(a+1)=='\"') a++;
 				else if (s.charAt(a)=='\"') break;
 			}
-			if (a==s.length()) throw new LexicalError(4);
+			if (a==s.length()) throw new Error(4);
 			return a;
 		}
 		if (Character.isLetter(s.charAt(0)) || s.charAt(0)=='_') {
@@ -164,7 +164,7 @@ public class Analyzer {
 		return s;
 	}
 	
-	static public LinkedList<Lexem> parseFile(String fileName) throws LexicalError {
+	static public LinkedList<Lexem> parseFile(String fileName) throws Error {
 		if (s==null) s = new Table();
 		
 		LinkedList<Lexem> l = new LinkedList<Lexem>();
@@ -174,7 +174,7 @@ public class Analyzer {
 		try {
 			r = new FileReader(new File(fileName));
 		} catch (FileNotFoundException e) {
-			throw new LexicalError(0,0);
+			throw new Error(0,0);
 		}
 		BufferedReader b = new BufferedReader(r);
 		String currentLine;
@@ -195,7 +195,7 @@ public class Analyzer {
 					index = -1;
 					try {
 						index = getEndOfLexem(currentLine)+1;
-					} catch (LexicalError le) {
+					} catch (Error le) {
 						le.setLine(lineId);
 						//JOptionPane.showMessageDialog(null, le.getMessage());
 						//return null;
@@ -230,7 +230,7 @@ public class Analyzer {
 									s.insertElement(lexem.getLex());
 								}
 								else {
-									LexicalError lerror = new LexicalError(7);
+									Error lerror = new Error(7);
 									lerror.setLine(lineId);
 									throw lerror;
 								}
@@ -260,7 +260,7 @@ public class Analyzer {
 				}
 			}
 			if (bracketCounter!=0) {
-				LexicalError lerror = new LexicalError(6);
+				Error lerror = new Error(6);
 				if (bracketCounter>0) lerror.setId(5);
 				lerror.setLine(lineId);
 				throw lerror;
@@ -268,7 +268,7 @@ public class Analyzer {
 			
 			return l;
 		} catch (IOException e) {
-			throw new LexicalError(1,0);
+			throw new Error(1,0);
 		}
 	}
 	
