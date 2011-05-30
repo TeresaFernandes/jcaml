@@ -1,0 +1,12 @@
+let rec noob = function (x:int) -> int -> x*2.
+LET x:int =4
+z+noob
+let x=3 in 
+  let y=15 in
+   let z = x+y in
+   	z+noob(2)
+   	
+ 
+"string bunita com \"\"\"\" =o\""
+
+oi

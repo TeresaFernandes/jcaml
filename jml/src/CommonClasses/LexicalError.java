@@ -1,0 +1,47 @@
+package CommonClasses;
+
+@SuppressWarnings("serial")
+public class LexicalError extends Exception {
+	private int id;
+	private int lineId;
+	private String extraMsg;
+	
+	public LexicalError(int id, int lineId) {
+		this.id = id;
+		this.lineId = lineId;
+	}
+	public LexicalError(int id) {
+		this.id = id;
+	}
+	
+	public void setLine(int line) {
+		this.lineId = line;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public void setExtra(String s) {
+		this.extraMsg = s;
+	}
+	
+	public String getMessage() {
+		String message;
+
+		switch (id) {
+			case 0: message = "File not Found"; break;
+			case 1: message = "File Reading Error"; break;
+			case 2: message = "Invalid Name"; break;
+			case 3: message = "Invalid Char: expected '"; break;
+			case 4: message = "Invalid String: expected \" "; break;
+			case 5: message = "Missing \')\'"; break;
+			case 6: message = "Unexpected \')\' at end of file"; break;
+			case 7: message = "Invalid use of 'rec' token"; break;
+				//...
+			default: message = "Unknown error";
+		}
+		
+		return  "[Line " + lineId + "] " + message + (extraMsg==null?"" : extraMsg);
+	}
+}
