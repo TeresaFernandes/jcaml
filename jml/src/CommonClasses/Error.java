@@ -41,6 +41,7 @@ public class Error extends Exception {
 			case 8: message = "Endless list"; break;
 			case 9: message = "] without a ["; break;
 			case 10: message = "Invalid Expression"; break;
+			case 11: message = "Undefined variable"; break;
 				//...
 			default: message = "Unknown error";
 		}
