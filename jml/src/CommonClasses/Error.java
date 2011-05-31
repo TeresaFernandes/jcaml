@@ -40,6 +40,7 @@ public class Error extends Exception {
 			case 7: message = "Invalid use of 'rec' token"; break;
 			case 8: message = "Endless list"; break;
 			case 9: message = "] without a ["; break;
+			case 10: message = "Invalid Expression"; break;
 				//...
 			default: message = "Unknown error";
 		}

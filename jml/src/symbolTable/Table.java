@@ -21,6 +21,10 @@ public class Table {
 		table.add(v);
 	}
 	
+	public void insert(Variable v) {
+		table.add(v);
+	}
+	
 	/**
 	 * Get value from symbol table
 	 * @param name Variable's name
@@ -50,5 +54,17 @@ public class Table {
 			if (table.get(a).getName().compareTo(name)==0) return true;
 		}
 		return false;
+	}
+	
+	public Table clone() {
+		Table c = new Table();
+		Variable v;
+		for (int a=0; a<table.size(); a++) {
+			v = table.get(a);
+			c.insert(v);
+		}
+		
+		return c;
+		
 	}
 }
