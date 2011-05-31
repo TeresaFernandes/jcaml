@@ -22,19 +22,24 @@ public class SintaxAnalyzer {
 	public static SintaxElement parseLexems(List<Lexem> list) throws Error {
 		
 		stack=new Stack<SintaxElement>();
+		SintaxElement se = new SintaxElement(list.remove(0));
 		
 		while (list.isEmpty()){
 			
 			
 			
+			stack.add(se);
 		}
 		
 		return null;
 	}
 	
 	private static boolean reconhece_programa(List<Lexem> list, Stack<SintaxElement> stack){
-		if(stack.isEmpty()|| (stack.size()==1 && stack.lastElement().getId()==SintaxElementId.DEFINICAO))
+		if(stack.size()==1 && stack.lastElement().getId()==SintaxElementId.DEFINICAO){
+			
+			
 			return true;
+		}
 		
 		return false;
 	}
