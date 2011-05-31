@@ -1,5 +1,6 @@
 package symbolTable;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Variable {
@@ -13,6 +14,7 @@ public class Variable {
 	public Variable(String name) {
 		this.name = name;
 		type = VarType.UNKNOWN;
+		value = new LinkedList();
 	}
 	
 	public String getName() {

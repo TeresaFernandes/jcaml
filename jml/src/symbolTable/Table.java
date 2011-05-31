@@ -31,16 +31,23 @@ public class Table {
 	 * @return Object
 	 */
 	public Variable getElement(String name) throws Error {
-		// TODO tudo
-		return null; 
+		Variable v;
+		for (int index=0; index<table.size(); index++) {
+			v = table.get(index);
+			if (v.getName().compareTo(name)==0) return v;
+		}
+		Error r = new Error(11);
+		r.setExtra(" " + name);
+		throw r; 
 	}
 	
 	/**
 	 * Update an object
 	 * @param updatedObject Updated object
 	 */
-	public void updateObject(Object updatedObject) throws Error {
-		// TODO tudo
+	// Método totalmente desnecessário
+	public void updateObject(Variable updatedObject) throws Error {
+		
 	}
 	
 	public void removeLast() {
@@ -49,7 +56,6 @@ public class Table {
 	}
 	
 	public boolean contains(String name) {
-		// TODO melhorar (ou não)
 		for (int a=0;a<table.size();a++) {
 			if (table.get(a).getName().compareTo(name)==0) return true;
 		}
