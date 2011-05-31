@@ -42,6 +42,7 @@ public class Error extends Exception {
 			case 9: message = "] without a ["; break;
 			case 10: message = "Invalid Expression"; break;
 			case 11: message = "Undefined variable"; break;
+			case 12: message = "Invalid table value"; break;
 				//...
 			default: message = "Unknown error";
 		}
