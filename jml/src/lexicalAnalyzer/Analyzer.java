@@ -166,7 +166,7 @@ public class Analyzer {
 	}
 	
 	// Remove as linhas em branco no começo do coisa
-	static private String removeBlankSpaces(String s) {
+	public static String removeBlankSpaces(String s) {
 		if (s.isEmpty()) return s;
 		while (s.startsWith(" ") || s.startsWith("\t")) s = s.substring(1,s.length());
 		return s;
