@@ -1,5 +1,7 @@
 package CommonClasses;
 
+import lexicalAnalyzer.Analyzer;
+
 
 public class Lexem {
 	private String lex;
@@ -21,6 +23,7 @@ public class Lexem {
 	}
 	
 	public void evalue() throws Error {
+		this.lex = Analyzer.removeBlankSpaces(this.lex);
 		// Palavras reservadas
 		if (lex.compareToIgnoreCase("let")==0) { id = LexemId.KEYWORD_LET; return; }
 		else if (lex.compareToIgnoreCase("in")==0) { id = LexemId.KEYWORD_IN; return; }
@@ -79,7 +82,7 @@ public class Lexem {
 		else if (lex.startsWith("&")) { id = LexemId.OPERATOR_STRCONCAT; return; }		
 		// Valores
 		else if (lex.startsWith("\"") && lex.endsWith("\"")) { id = LexemId.STRING_VALUE; return; }
-		else if (lex.startsWith("\'") && lex.endsWith("\'")) { id = LexemId.CHAR_VALUE; return; }
+		else if (lex.startsWith("'") && lex.endsWith("'")) { id = LexemId.CHAR_VALUE; return; }
 		else if (lex.compareToIgnoreCase("true")==0) { id = LexemId.BOOL_VALUE; return; }
 		else if (lex.compareToIgnoreCase("false")==0) { id = LexemId.BOOL_VALUE; return; }
 		
@@ -114,4 +117,11 @@ public class Lexem {
 		this.line = l;
 	}
 
+	public boolean isUnaryOperator() {
+		switch(id) {
+			case OPERATOR_NOT:
+			case OPERATOR_UNARYMINUS: return true;
+			default: return false;
+		}
+	}
 }
