@@ -39,6 +39,7 @@ public class Error extends Exception {
 			case 6: message = "Unexpected \')\' at end of file"; break;
 			case 7: message = "Invalid use of 'rec' token"; break;
 			case 8: message = "Endless list"; break;
+			case 9: message = "] without a ["; break;
 				//...
 			default: message = "Unknown error";
 		}

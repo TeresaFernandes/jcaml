@@ -107,6 +107,7 @@ public class Analyzer {
 			}
 			throw new Error(8);
 		}
+		else if (s.startsWith("]")) throw new Error(9);
 		
 		else if (s.startsWith("'")) { // Reconhecer char
 			Error lerror;
