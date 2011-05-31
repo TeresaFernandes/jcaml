@@ -93,15 +93,22 @@ public class Analyzer {
 			|| s.startsWith("(")
 			|| s.startsWith(")")
 			|| s.startsWith(",")
-			|| s.startsWith("[")
-			|| s.startsWith("]")
+			//|| s.startsWith("[")
+			//|| s.startsWith("]")
 			|| s.startsWith(";")
 			|| s.startsWith(":")
 			|| s.startsWith("&")
 			|| s.startsWith("<")
 			|| s.startsWith(">")) return 0;
 		
-		if (s.startsWith("'")) { // Reconhecer char
+		if (s.startsWith("[")) { // Reconhece lista
+			for (int a=1; a<s.length();a++) {
+				if (s.charAt(a)==']') return a;
+			}
+			throw new Error(8);
+		}
+		
+		else if (s.startsWith("'")) { // Reconhecer char
 			Error lerror;
 			if (s.startsWith("''") && !s.startsWith("'''")) return 1; // Char vazio
 			else if (s.startsWith("'\\")){

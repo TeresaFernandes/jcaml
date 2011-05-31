@@ -41,10 +41,9 @@ public class SintaxElement {
 		case FLOAT_VALUE:
 		case CHAR_VALUE:
 		case STRING_VALUE:
-		case BOOL_VALUE: this.id = SintaxElementId.CONST; break;
+		case BOOL_VALUE:
+		case LIST: this.id = SintaxElementId.CONST; break;
 		
-		case LIST_START: this.id = SintaxElementId.LIST_START; break;
-		case LIST_END: this.id = SintaxElementId.LIST_END; break;
 			
 		case OPERATOR_LISTCONCAT:
 		case OPERATOR_LISTAPPEND:

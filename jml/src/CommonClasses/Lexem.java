@@ -73,8 +73,7 @@ public class Lexem {
 		else if (lex.compareTo("<")==0) { id = LexemId.OPERATOR_LESSTHAN; return; }
 		else if (lex.compareTo(">=")==0) { id = LexemId.OPERATOR_GREATEREQUALTHAN; return; }
 		else if (lex.compareTo("<=")==0) { id = LexemId.OPERATOR_LESSEQUALTHAN; return; }
-		else if (lex.startsWith("[")) { id = LexemId.LIST_START; return; }
-		else if (lex.startsWith("]")) { id = LexemId.LIST_END; return; }
+		else if (lex.startsWith("[")) { id = LexemId.LIST; return; }
 		else if (lex.startsWith("&&")) { id = LexemId.OPERATOR_AND; return; }
 		else if (lex.startsWith("||")) { id = LexemId.OPERATOR_OR; return; }
 		else if (lex.startsWith("&")) { id = LexemId.OPERATOR_STRCONCAT; return; }		
