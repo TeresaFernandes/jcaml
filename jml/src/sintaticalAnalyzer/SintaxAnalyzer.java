@@ -1,5 +1,6 @@
 package sintaticalAnalyzer;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -24,53 +25,78 @@ public class SintaxAnalyzer {
 		stack=new Stack<SintaxElement>();
 		SintaxElement se = new SintaxElement(list.remove(0));
 		
-		while (list.isEmpty()){
+		while (!list.isEmpty()){
 			
+			if (!(reconhece_programa(list) || reconhece_definicao(list) //acho que tah errado
+				|| reconhece_definicao_local(list)|| reconhece_definicao_global(list))){
 			
-			
-			stack.add(se);
+				stack.add(se);
+			}
 		}
 		
 		return null;
 	}
 	
-	private static boolean reconhece_programa(List<Lexem> list, Stack<SintaxElement> stack){
-		if(stack.size()==1 && stack.lastElement().getId()==SintaxElementId.DEFINICAO){
+	private static boolean reconhece_programa(List<Lexem> list){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		laux.add(stack.remove(stack.size()-1));
+		
+		if(laux.get(0).getId()==SintaxElementId.DEFINICAO){
 			
-			
+			stack.add(new SintaxElement(SintaxElementId.PROGRAMA, laux));
 			return true;
 		}
 		
 		return false;
 	}
 	
-	private static boolean reconhece_definicao(List<Lexem> list, Stack<SintaxElement> stack){
-		if (   stack.lastElement().getId()==SintaxElementId.CHAMADA_FUNCAO 
-			|| stack.lastElement().getId()==SintaxElementId.DEFINICAO_LOCAL
-			|| stack.lastElement().getId()==SintaxElementId.DEFINICAO_GLOBAL
-			|| stack.lastElement().getId()==SintaxElementId.EXP) 	return true;
+	private static boolean reconhece_definicao(List<Lexem> list){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		laux=stack.subList(stack.size()-5, stack.size()-1);
+		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-6);
 		
-		return false;
-	}
-	private static boolean reconhece_definicao_local(List<Lexem> list, Stack<SintaxElement> stack){
-		
-		if (  stack.remove(stack.size()-1).getId()==SintaxElementId.E
-			&& stack.remove(stack.size()-1).getId()==SintaxElementId.KEYWORD_IN
-			&& stack.remove(stack.size()-1).getId()==SintaxElementId.E
-			&& stack.remove(stack.size()-1).getId()==SintaxElementId.ASSIGNMENT
-			&& stack.remove(stack.size()-1).getId()==SintaxElementId.ID
-			&& stack.remove(stack.size()-1).getId()==SintaxElementId.KEYWORD_LET)
-			return true;
-		
-		return false;
-	}
-	private static boolean reconhece_global(List<Lexem> list, Stack<SintaxElement> stack){
-		if (  	   stack.remove(stack.size()-1).getId()==SintaxElementId.E
-				&& stack.remove(stack.size()-1).getId()==SintaxElementId.ASSIGNMENT
-				&& stack.remove(stack.size()-1).getId()==SintaxElementId.ID
-				&& stack.remove(stack.size()-1).getId()==SintaxElementId.KEYWORD_LET)
-				return true;
+		if (   laux.get(3).getId()==SintaxElementId.CHAMADA_FUNCAO 
+			||  laux.get(2).getId()==SintaxElementId.DEFINICAO_LOCAL
+			||  laux.get(1).getId()==SintaxElementId.DEFINICAO_GLOBAL
+			||  laux.get(0).getId()==SintaxElementId.EXP){
 			
+			stack.add(new SintaxElement(SintaxElementId.DEFINICAO, laux));
+			return true;
+		}
+		
+		return false;
+	}
+	private static boolean reconhece_definicao_local(List<Lexem> list){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		laux=stack.subList(stack.size()-7, stack.size()-1);
+		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-8);
+		
+		if (  laux.get(5).getId()==SintaxElementId.E
+			&& laux.get(4).getId()==SintaxElementId.KEYWORD_IN
+			&& laux.get(3).getId()==SintaxElementId.E
+			&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
+			&& laux.get(1).getId()==SintaxElementId.ID
+			&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+			
+			stack.add(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
+			return true;
+		}
+		
+		return false;
+	}
+	private static boolean reconhece_definicao_global(List<Lexem> list){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		laux=stack.subList(stack.size()-5, stack.size()-1);
+		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-6);
+		
+		if (  	   laux.get(3).getId()==SintaxElementId.E
+				&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
+				&& laux.get(1).getId()==SintaxElementId.ID
+				&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+			
+			stack.add(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));
+			return true;
+		}			
 		
 		return false;
 	}

@@ -29,10 +29,13 @@ public class Main {
 			l = Analyzer.parseFile(arquivo);
 			
 			if (l==null) return;
-			for (int a=0; a<l.size(); a++) {
+			/*for (int a=0; a<l.size(); a++) {
 				Lexem x = l.get(a);
 				System.out.println(x.getLex() + "\t" + x.getId());
-			}
+			}*/
+			
+			
+			
 		} catch (Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
