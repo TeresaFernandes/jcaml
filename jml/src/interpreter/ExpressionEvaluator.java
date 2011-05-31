@@ -29,6 +29,7 @@ public class ExpressionEvaluator {
 			if (current.getId()==SintaxElementId.CHAMADA_FUNCAO) {
 				lex.push(functionCall(scope, current));
 			}
+			// TODO continuar a fazer aqui, isso é só para empilhar chamadas de função
 			
 		}
 		
