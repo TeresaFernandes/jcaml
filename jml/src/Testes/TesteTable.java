@@ -1,6 +1,11 @@
 package Testes;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import interpreter.ExpressionEvaluator;
 import CommonClasses.Error;
+import CommonClasses.Lexem;
 import symbolTable.Table;
 import symbolTable.VarType;
 import symbolTable.Variable;
@@ -31,6 +36,18 @@ public class TesteTable {
 		for (int a=0; a < t.table.size(); a++) {
 			v = t.table.get(a);
 			System.out.println(v.getName() + " " + v.getValue() + " " + v.getType());
+		}
+		
+		// coloque aqui o coisa que vc quer testar
+		String list = "[2.5, 12., '\n']";
+		try {
+			Lexem lex = new Lexem(list);
+			lex.evalue();
+			System.out.println(lex.getId());
+			System.out.println(ExpressionEvaluator.valueFromLexem(lex));
+		} catch (Error e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 	
