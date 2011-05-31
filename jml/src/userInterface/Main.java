@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import CommonClasses.Lexem;
 import CommonClasses.Error;
 
+import sintaticalAnalyzer.SintaxAnalyzer;
 import symbolTable.Table;
 
 //import javax.swing.JOptionPane;
@@ -33,6 +34,7 @@ public class Main {
 				Lexem x = l.get(a);
 				System.out.println(x.getLex() + "\t" + x.getId());
 			}*/
+			SintaxAnalyzer.parseLexems(l);
 			
 			
 			

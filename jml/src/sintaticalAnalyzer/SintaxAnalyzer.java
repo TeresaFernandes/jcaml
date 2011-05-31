@@ -22,16 +22,15 @@ public class SintaxAnalyzer {
 	 */
 	public static SintaxElement parseLexems(List<Lexem> list) throws Error {
 		
-		stack=new Stack<SintaxElement>();
-		SintaxElement se = new SintaxElement(list.remove(0));
+		if (stack==null) stack=new Stack<SintaxElement>();
 		
 		while (!list.isEmpty()){
 			
-			if (!(reconhece_programa(list) || reconhece_definicao(list) //acho que tah errado
-				|| reconhece_definicao_local(list)|| reconhece_definicao_global(list))){
+			if (!(reconhece_definicao_local(list)||reconhece_definicao_global(list))){
 			
-				stack.add(se);
+				stack.push(new SintaxElement(list.remove(0)));
 			}
+			System.out.println(stack.size()+" "+stack.lastElement().getId().toString());
 		}
 		
 		return null;
@@ -39,12 +38,16 @@ public class SintaxAnalyzer {
 	
 	private static boolean reconhece_programa(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		laux.add(stack.remove(stack.size()-1));
 		
-		if(laux.get(0).getId()==SintaxElementId.DEFINICAO){
+		if (stack.size()>0){
+			laux.add(stack.pop());
 			
-			stack.add(new SintaxElement(SintaxElementId.PROGRAMA, laux));
-			return true;
+			if(laux.get(0).getId()==SintaxElementId.DEFINICAO){
+				stack.push(new SintaxElement(SintaxElementId.PROGRAMA, laux));
+				return true;
+			}else{
+				stack.add(laux.remove(0));
+			}
 		}
 		
 		return false;
@@ -52,54 +55,84 @@ public class SintaxAnalyzer {
 	
 	private static boolean reconhece_definicao(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		laux=stack.subList(stack.size()-5, stack.size()-1);
-		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-6);
 		
-		if (   laux.get(3).getId()==SintaxElementId.CHAMADA_FUNCAO 
-			||  laux.get(2).getId()==SintaxElementId.DEFINICAO_LOCAL
-			||  laux.get(1).getId()==SintaxElementId.DEFINICAO_GLOBAL
-			||  laux.get(0).getId()==SintaxElementId.EXP){
+		if (stack.size()>3){
 			
-			stack.add(new SintaxElement(SintaxElementId.DEFINICAO, laux));
-			return true;
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			
+			if (   laux.get(3).getId()==SintaxElementId.CHAMADA_FUNCAO 
+				&&  laux.get(2).getId()==SintaxElementId.DEFINICAO_LOCAL
+				&&  laux.get(1).getId()==SintaxElementId.DEFINICAO_GLOBAL
+				&&  laux.get(0).getId()==SintaxElementId.EXP){
+				
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO, laux));
+				return true;
+			}else{
+				while(!laux.isEmpty()){
+					stack.add(laux.remove(0));
+				}
+			}
 		}
 		
 		return false;
 	}
 	private static boolean reconhece_definicao_local(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		laux=stack.subList(stack.size()-7, stack.size()-1);
-		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-8);
 		
-		if (  laux.get(5).getId()==SintaxElementId.E
-			&& laux.get(4).getId()==SintaxElementId.KEYWORD_IN
-			&& laux.get(3).getId()==SintaxElementId.E
-			&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
-			&& laux.get(1).getId()==SintaxElementId.ID
-			&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+		if (stack.size()>3 && (list.get(0).getId()== LexemId.KEYWORD_IN)){
 			
-			stack.add(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
-			return true;
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			
+			if (  	   laux.get(3).getId()==SintaxElementId.E
+					&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
+					&& laux.get(1).getId()==SintaxElementId.ID
+					&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+				
+				laux.add(new SintaxElement(list.remove(0)));
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
+				return true;
+			}else{
+				while(!laux.isEmpty()){
+					stack.add(laux.remove(0));
+				}
+			}
 		}
 		
 		return false;
 	}
+	
+	
 	private static boolean reconhece_definicao_global(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		laux=stack.subList(stack.size()-5, stack.size()-1);
-		stack=(Stack<SintaxElement>) stack.subList(0, stack.size()-6);
-		
-		if (  	   laux.get(3).getId()==SintaxElementId.E
-				&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
-				&& laux.get(1).getId()==SintaxElementId.ID
-				&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+		if (stack.size()>3){
 			
-			stack.add(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));
-			return true;
-		}			
-		
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			
+			if (  	   laux.get(3).getId()==SintaxElementId.E
+					&& laux.get(2).getId()==SintaxElementId.ASSIGNMENT
+					&& laux.get(1).getId()==SintaxElementId.ID
+					&& laux.get(0).getId()==SintaxElementId.KEYWORD_LET){
+				
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));
+				return true;
+			}else{
+				while(!laux.isEmpty()){
+					stack.add(laux.remove(0));
+				}
+			}
+		}
 		return false;
 	}
+	
 	private static boolean reconhece_e(List<Lexem> list, Stack<SintaxElement> stack){
 		return false;
 	}
