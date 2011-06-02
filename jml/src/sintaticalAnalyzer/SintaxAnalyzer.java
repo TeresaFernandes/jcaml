@@ -16,6 +16,7 @@ import CommonClasses.SintaxElementId;
 public class SintaxAnalyzer {
 
 	private static Stack<SintaxElement> stack; // Usem para o parsing
+	private static List<Lexem> list; // Usem para o parsing
 	
 	
 	//Começar tudo novamente do zero
@@ -26,17 +27,60 @@ public class SintaxAnalyzer {
 	 * @return (SintaxElement e)
 	 * e.getId() == SintaxElementId.PROGRAMA 
 	 */
-	public static SintaxElement parseLexems(List<Lexem> list) throws Error {
+	public static SintaxElement parseLexems(List<Lexem> l) throws Error {
 		
+		if (stack==null)list=l;
 		if (stack==null)stack=new Stack<SintaxElement>();
-		reconhece_def_local_global(list);
-		
+				
+		if (reconhece_definicao_local());
 		return null;
 	}
 	
 	
+	private static boolean reconhece_definicao_local(){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		
+		if (list.size()>5){
+		
+			if (new SintaxElement(list.get(0)).getId() == SintaxElementId.KEYWORD_LET 
+					&& new SintaxElement(list.get(1)).getId() == SintaxElementId.ID
+					&& new SintaxElement(list.get(2)).getId() == SintaxElementId.ASSIGNMENT
+					&& reconhece_e()
+					&& new SintaxElement(list.get(0)).getId() == SintaxElementId.KEYWORD_IN
+					&& reconhece_e()){
+					
+				laux.add(new SintaxElement(list.remove(0)));
+				laux.add(new SintaxElement(list.remove(0)));
+				laux.add(new SintaxElement(list.remove(0)));
+				laux.add(stack.pop());//lista retornada por reconhece_e que esta na pilha
+				laux.add(new SintaxElement(list.remove(0)));
+				laux.add(stack.pop());//lista retornada por reconhece_e que esta na pilha
+				
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
+				return true;
+			}
+		}
+		
+			return false;
+	}
 	
-	private static boolean reconhece_def_local_global(List<Lexem> list){
+	private static boolean reconhece_e(){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		
+		if (new SintaxElement(list.get(0)).getId() == SintaxElementId.ID
+				||new SintaxElement(list.get(0)).getId() == SintaxElementId.CONST){//mais possibilidade aqui
+			laux.add(new SintaxElement(list.remove(0)));
+			while(new SintaxElement(list.get(0)).getId() == SintaxElementId.OP || new SintaxElement(list.get(0)).getId() == SintaxElementId.CONST || new SintaxElement(list.get(0)).getId() == SintaxElementId.ID){//adicionar algo que infira a ordem certa de aparecimento das definições
+				laux.add(new SintaxElement(list.remove(0)));
+			}
+			
+			stack.push(new SintaxElement(SintaxElementId.E, laux));
+			return true;
+		}
+		return false;
+	}
+	
+	/*private static boolean reconhece_def_local_global(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		laux.add(new SintaxElement(list.get(0)));
 		
@@ -65,15 +109,6 @@ public class SintaxAnalyzer {
 		}
 		return false;
 	}
-	
-	//tive a ideia de ir empilhando enquanto nao for nenhuma definição da gramatica e qnd chegar numa monta um metodo que reconhce o que tem na lista
-	private static boolean reconhece_e(List<Lexem> list){
-		
-		//if 
-		return false;
-	}
-	
-	
 	
 	private static boolean reconhece_programa(List<Lexem> list){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
@@ -114,6 +149,5 @@ public class SintaxAnalyzer {
 		}
 		return false;
 	}
-	
-		
+	*/	
 }
