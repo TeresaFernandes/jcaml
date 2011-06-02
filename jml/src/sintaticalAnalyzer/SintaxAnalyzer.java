@@ -32,13 +32,34 @@ public class SintaxAnalyzer {
 		if (stack==null)list=l;
 		if (stack==null)stack=new Stack<SintaxElement>();
 				
-		if (reconhece_definicao_local());
+		if (reconhece_definicao_local()||reconhece_definicao_global()){};
 		return null;
 		
 		
 	}
 	
 	
+	private static boolean reconhece_definicao_global(){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+				
+		if (list.size()>3){
+			if (	reconhece_Let()
+					&& reconhece_ID()
+					&& reconhece_Assigment()
+					&& reconhece_e()){
+				
+				for (int i=0;i<3;i++){
+					laux.add(stack.pop());	
+				}
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));	
+				return true;
+			}
+		}		
+		
+			return false;
+	}
+	
+	//analise de definicao local deve vir antes da analise de definição global
 	private static boolean reconhece_definicao_local(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		if (list.size()>5){
@@ -54,7 +75,7 @@ public class SintaxAnalyzer {
 					laux.add(stack.pop());	
 				}
 				
-				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));	
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
 				return true;
 			}
 		}
@@ -62,6 +83,7 @@ public class SintaxAnalyzer {
 			return false;
 	}
 	
+	//verifica se é um lexema "let" e se for coloca na pilha
 	private static boolean reconhece_Let(){
 		SintaxElement se = new SintaxElement(list.remove(0));
 		if (se.getId() == SintaxElementId.KEYWORD_LET){
@@ -95,15 +117,100 @@ public class SintaxAnalyzer {
 		if (se.getId() == SintaxElementId.KEYWORD_IN){
 			stack.push(se);
 			return true;
-		}
+		}		
+		list.add(0, se.getLexem());
+		return false;
+	}
+	private static boolean reconhece_fun(){
+		SintaxElement se = new SintaxElement(list.remove(0));
+		if (se.getId() == SintaxElementId.KEYWORD_FUN){
+			stack.push(se);
+			return true;
+		}		
 		list.add(0, se.getLexem());
 		return false;
 	}
 	
+	private static boolean reconhece_bracketOpen(){
+		SintaxElement se = new SintaxElement(list.remove(0));
+		if (se.getId() == SintaxElementId.BRACKET_OPEN){
+			stack.push(se);
+			return true;
+		}		
+		list.add(0, se.getLexem());
+		return false;
+	}
+	
+	private static boolean reconhece_bracketClose(){
+		SintaxElement se = new SintaxElement(list.remove(0));
+		if (se.getId() == SintaxElementId.BRACKET_CLOSE){
+			stack.push(se);
+			return true;
+		}		
+		list.add(0, se.getLexem());
+		return false;
+	}
+	
+	private static boolean reconhece_par_formais(){
+		SintaxElement se = new SintaxElement(list.remove(0));
+		if (se.getId() == SintaxElementId.BRACKET_CLOSE){
+			stack.push(se);
+			return true;
+		}		
+		list.add(0, se.getLexem());
+		return false;
+	}
+	private static boolean reconhece_arrow(){
+		SintaxElement se = new SintaxElement(list.remove(0));
+		if (se.getId() == SintaxElementId.KEYWORD_ARROW){
+			stack.push(se);
+			return true;
+		}		
+		list.add(0, se.getLexem());
+		return false;
+	}
+	
+	private static boolean reconhece_def_funcao(){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		if (list.size()>5){
+			
+			if (	reconhece_fun()
+					&& reconhece_bracketOpen()
+					&& reconhece_par_formais()
+					&& reconhece_bracketClose()
+					&&reconhece_arrow()
+					&& reconhece_exp()){
+				
+				for (int i=0;i<6;i++){
+					laux.add(stack.pop());	
+				}
+				
+				stack.push(new SintaxElement(SintaxElementId.DEF_FUNCAO, laux));
+				return true;
+			}
+		}
+		
+			return false;
+	}
+	
+	private static boolean reconhece_exp(){
+		return false;
+	}
+	
+	//INCOMPLETO
 	private static boolean reconhece_e(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		
-			if (new SintaxElement(list.get(0)).getId() == SintaxElementId.ID
+		if (reconhece_definicao_local()
+			|| reconhece_def_funcao()
+			|| reconhece_exp()){
+			
+			laux.add(stack.pop());
+			stack.push(new SintaxElement(SintaxElementId.E, laux));
+			return true;	
+			
+		}
+			/*if (new SintaxElement(list.get(0)).getId() == SintaxElementId.ID
 					||new SintaxElement(list.get(0)).getId() == SintaxElementId.CONST
 					||list.get(0).getId()==LexemId.OPERATOR_UNARYMINUS
 					||list.get(0).getId()==LexemId.OPERATOR_NOT){//mais possibilidade aqui
@@ -121,7 +228,7 @@ public class SintaxAnalyzer {
 				stack.push(new SintaxElement(SintaxElementId.E, laux));
 
 				return true;
-		}
+		}*/
 		return false;
 	}
-	}
+}
