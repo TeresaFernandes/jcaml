@@ -7,6 +7,7 @@ public enum SintaxElementId {
 	ID,
 	MATCH_VAR,
 	MATCH,
+	MATCH_LINE,//
 	IF,
 	PAR_REAIS,
 	CHAMADA_FUNCAO,
