@@ -27,7 +27,7 @@ public class ExpressionEvaluator {
 		while (!l.isEmpty()) {
 			current = l.getFirst();
 			if (current.getId()==SintaxElementId.CHAMADA_FUNCAO) {
-				lex.push(functionCall(scope, current));
+				lex.push(functionCall(scope.clone(), current));
 			}
 			// TODO continuar a fazer aqui, isso é só para empilhar chamadas de função
 			
