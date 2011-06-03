@@ -37,19 +37,28 @@ public class SintaxAnalyzer {
 		
 		if (reconhece_programa()){
 			
+			System.out.println("Programa reconhecido");
 			return stack.get(0);
 			
 		}		
+		System.out.println("Programa não reconhecido");
 		return null;		
 	}
 		
 	private static boolean reconhece_programa(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if ( list.size()==0 || reconhece_definicao()){//atenção aqui...pode ser que tenha mais que uma definicao. Tem que garantir que soexistem definicoes na pilha
-			
-			laux.add(stack.pop());
-			stack.push(new SintaxElement(SintaxElementId.PROGRAMA, laux));	
-			return true;
+		
+		if ( list.size()==0) return true;
+		
+		//atenção aqui...pode ser que tenha mais que uma definicao.
+		while(reconhece_definicao()&& reconhece_semicolon()){
+            laux.add(stack.remove(0));
+            laux.add(stack.remove(0));
+            
+            if (list.size()==0){
+                stack.push(new SintaxElement(SintaxElementId.PROGRAMA, laux));
+                return true;
+            }
 		}
 		return false;
 	}
@@ -217,6 +226,19 @@ public class SintaxAnalyzer {
 		list.add(0, se.getLexem());
 		return false;
 	}
+	
+	private static boolean reconhece_semicolon(){
+		if(list.size()>0){
+			SintaxElement se = new SintaxElement(list.remove(0));
+			if (se.getId() == SintaxElementId.SEMICOLON){
+				stack.push(se);
+				return true;
+			}		
+			list.add(0, se.getLexem());
+		}
+		return false;
+	}
+	
 	private static boolean reconhece_colon(){
 		SintaxElement se = new SintaxElement(list.remove(0));
 		if (se.getId() == SintaxElementId.COLON){
