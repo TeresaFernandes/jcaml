@@ -156,6 +156,7 @@ public class Analyzer {
 						(s.charAt(a)=='-') ||
 						(s.charAt(a)=='/') ||
 						(s.charAt(a)=='^') ||
+						(s.charAt(a)==';') ||
 						(s.charAt(a)=='%') ||
 						(s.charAt(a)==',') ||
 						(s.charAt(a)==':')) return a-1; 

@@ -3,6 +3,8 @@ package Testes;
 import java.util.LinkedList;
 import java.util.List;
 
+import lexicalAnalyzer.Analyzer;
+
 import interpreter.ExpressionEvaluator;
 import CommonClasses.Error;
 import CommonClasses.Lexem;
@@ -49,6 +51,9 @@ public class TesteTable {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		
+		String program = "function (x:int) -> x*2";
 	}
 	
 }
