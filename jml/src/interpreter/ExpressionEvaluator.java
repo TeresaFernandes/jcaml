@@ -27,22 +27,49 @@ public class ExpressionEvaluator {
 		while (!l.isEmpty()) {
 			current = l.getFirst();
 			if (current.getId()==SintaxElementId.CHAMADA_FUNCAO) {
-				lex.push(functionCall(scope.clone(), current));
+				return functionCall(scope.clone(), current);
 			}
-			// TODO continuar a fazer aqui, isso é só para empilhar chamadas de função
-			
+			else if (current.getId()==SintaxElementId.DEFINICAO_GLOBAL) {
+				// Nome da variável está na posição 1 da lista, ai basta pegar o lex dele
+				String varName = current.getLexems().get(1).getLexem().getLex();
+				Variable var = scope.getElement(varName); // Variável que vai ser alterada na tabela de simbolos
+				if (current.getLexems().get(3).getId()==SintaxElementId.DEF_FUNCAO) {
+					// Se for uma função arrumar a tabela de simbolos
+					// TODO arrumar a tabela de simbolos
+				}
+				else {
+					// Se não for função, é só atualizar o valor e o tipo
+					// Após chamar recursivamente o evalue
+					Variable retorno = evalue(scope,current.getLexems().get(3));
+					var.setValue(retorno.getValue());
+					var.setType(retorno.getType());
+					return retorno;
+				}
+			}
 		}
 		
 		return r;
 	}
 	
 	// Deve retornar um valor
-	public static Lexem functionCall(Table scope, SintaxElement fun) throws Error {
+	public static Variable functionCall(Table scope, SintaxElement fun) throws Error {
 		List<SintaxElement> list = fun.getLexems();
 
 		try {
 			// Detectar a função
 			Variable funcao = scope.getElement(list.get(0).getLexem().getLex());
+			
+			// Para função pre-definida
+			if (funcao.getType()==VarType.DEFAULTFUNCTION_TYPE) {
+				// Passar o escopo, os parametros reais e o nome da função
+				if (fun.getLexems().get(2).getId()==SintaxElementId.PAR_REAIS) {
+					return defaultFunctionCall(scope, fun.getLexems().get(2), funcao.getName());
+				} // TODO tratar quando a função não tem parametros reais
+				else {
+					Error r = new Error(14);
+					r.setExtra(": " + funcao.getName());
+				}
+			}
 			
 			List<SintaxElement> parameters = funcao.getAux();
 			
@@ -60,7 +87,7 @@ public class ExpressionEvaluator {
 			// Começam em 2 e vão até tamanho-2 (o ultimo elemento é um ')' )
 			for (int parR=2, parF=0;parR<fun.getLexems().size()-2; parR++, parF++) {
 				// Pegar o parametro real e colocar no espaço de endereçamendo do parametro formal
-				// TODO
+				// TODO dá pra unir esses dois for
 			}
 			
 		} catch (Error e) {
@@ -70,6 +97,11 @@ public class ExpressionEvaluator {
 		return null;
 	}
 	
+	private static Variable defaultFunctionCall(Table scope, SintaxElement parameters, String name) {
+		// TODO
+		return null;
+	}
+
 	private static VarType typeFromLex(Lexem l) {
 		switch (l.getId()) {
 			case TYPE_BOOL: return VarType.BOOL_TYPE;
