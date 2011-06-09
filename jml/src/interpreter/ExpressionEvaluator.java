@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import org.omg.CORBA.UNKNOWN;
+
 import CommonClasses.*;
 import CommonClasses.Error;
 import symbolTable.Table;
@@ -118,51 +120,79 @@ public class ExpressionEvaluator {
 	}
 	
 	// Deve retornar um valor
-	public static Variable functionCall(Table scope, SintaxElement fun) throws Error {
-		List<SintaxElement> list = fun.getLexems();
+	public static Variable functionCall(Table scope, SintaxElement funCall) throws Error {
+		List<SintaxElement> funlist = funCall.getLexems();
 
 		try {
 			// Detectar a função
-			Variable funcao = scope.getElement(list.get(0).getLexem().getLex());
+			Variable funcao = scope.getElement(funlist.get(0).getLexem().getLex());
 			
 			// Para função pre-definida
 			if (funcao.getType()==VarType.DEFAULTFUNCTION_TYPE) {
 				// Passar o escopo, os parametros reais e o nome da função
-				if (fun.getLexems().get(2).getId()==SintaxElementId.PAR_REAIS) {
-					return defaultFunctionCall(scope, getRealParameters(fun), funcao.getName());
+				if (funCall.getLexems().get(2).getId()==SintaxElementId.PAR_REAIS) {
+					return defaultFunctionCall(scope, getRealParameters(funCall), funcao.getName());
 				}
 				else {
 					Error r = new Error(14);
 					r.setExtra(": " + funcao.getName());
+					throw r;
 				}
 			}
 			
-			List<SintaxElement> parameters = funcao.getAux();
+			List<SintaxElement> formalParameters = funcao.getAux();
+			List<SintaxElement> realParameters = getRealParameters(funCall);
 			
-			// Criar os elementos parametro na table
-			Variable v;
-			for (int a=0; a<parameters.size(); a+=2) {
-				// Nome da variável
-				v = new Variable(parameters.get(a).getLexems().get(0).getLexem().getLex());
-				// Tipo da variável
-				v.setType(typeFromLex(parameters.get(a).getLexems().get(2).getLexem()));
-				// Insere a variável no escopo da função
-				scope.insert(v);
+			if (formalParameters.size()!=realParameters.size()) {
+				Error r = new Error(16);
+				r.setExtra(": "+funcao.getName() + " expected "+formalParameters.size()+" got "+realParameters.size());
+				throw r;
 			}
-			// Agora pego os parametros reais passados
-			// Começam em 2 e vão até tamanho-2 (o ultimo elemento é um ')' )
-			for (int parR=2, parF=0;parR<fun.getLexems().size()-2; parR++, parF++) {
-				// Pegar o parametro real e colocar no espaço de endereçamendo do parametro formal
-				// TODO dá pra unir esses dois for
+			// Se os parametros estiverem ok, ir colocando na cópia do scope, e verificando os tipos
+			Table newScope = scope.clone();
+			Variable var; Variable realVar;
+			for (int c=0;c<realParameters.size();c++) {
+				var = createVarFromParameter(formalParameters.get(c));
+				realVar = evalue(newScope,realParameters.get(c));
+				// Se os tipos forem incompatíveis, e o tipo da variável real já tiver sido determinado
+				// * lembrando que os tipos formais já são estabelecidos préviamente
+				if (realVar.getType() != var.getType() && realVar.getType()!=VarType.UNKNOWN) {
+					Error r = new Error(18);
+					r.setExtra(" expected " +var.getType() + " got " + realVar.getType());
+					throw r;
+				}
+				var.setValue(realVar.getValue());
+				newScope.insert(var);
 			}
+			SintaxElement funExp = (SintaxElement) funcao.getValue();
+			return evalue(newScope,funExp);
+			// TODO testar
+			// TODO PAREI AQUI
 			
 		} catch (Error e) {
-			e.setLine(list.get(0).getLexem().getLine());
+			e.setLine(funlist.get(0).getLexem().getLine());
 			throw e;
 		}
-		return null;
 	}
 	
+	private static Variable createVarFromParameter(SintaxElement sintaxElement) {
+		// Criar a variável a partir de um parametro formal
+		// formato <ID> : <TIPO>, onde cada um desses é um sintaxElement, e tem o lexema correspondente
+		Variable v = new Variable(sintaxElement.getLexems().get(0).getLexem().getLex());
+		Lexem type = sintaxElement.getLexems().get(2).getLexem();
+		VarType t = VarType.UNKNOWN;
+		switch (type.getId()) {
+			case TYPE_BOOL: t = VarType.BOOL_TYPE; break;
+			case TYPE_CHAR: t = VarType.CHAR_TYPE; break;
+			case TYPE_STRING: t = VarType.STRING_TYPE; break;
+			case TYPE_INT: t = VarType.INT_TYPE; break;
+			case TYPE_FLOAT: t = VarType.FLOAT_TYPE; break;
+			case TYPE_LIST: t = VarType.LIST_TYPE; break;
+		}
+		v.setType(t);
+		return v;
+	}
+
 	private static Variable defaultFunctionCall(Table scope, List<SintaxElement> parameters, String name) {
 		if (name.compareToIgnoreCase("abs")==0) {}
 		else if (name.compareToIgnoreCase("ceil")==0) {}

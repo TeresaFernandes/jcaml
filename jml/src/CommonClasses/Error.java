@@ -46,6 +46,8 @@ public class Error extends Exception {
 			case 13: message = "Invalid program"; break;
 			case 14: message = "Invalid function use"; break;
 			case 15: message = "Expected Boolean Expression"; break;
+			case 16: message = "Invalid function parameters"; break;
+			case 17: message = "Invalid parameter value"; break;
 				//...
 			default: message = "Unknown error";
 		}
