@@ -42,9 +42,10 @@ public class Error extends Exception {
 			case 9: message = "] without a ["; break;
 			case 10: message = "Invalid Expression"; break;
 			case 11: message = "Undefined variable"; break;
-			case 12: message = "Invalid table value"; break;
+			case 12: message = "Invalid list value"; break;
 			case 13: message = "Invalid program"; break;
 			case 14: message = "Invalid function use"; break;
+			case 15: message = "Expected Boolean Expression"; break;
 				//...
 			default: message = "Unknown error";
 		}
