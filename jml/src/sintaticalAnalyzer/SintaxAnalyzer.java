@@ -5,66 +5,50 @@ import java.util.List;
 import java.util.Stack;
 
 import CommonClasses.Lexem;
+import CommonClasses.LexemId;
 import CommonClasses.SintaxElement;
 import CommonClasses.SintaxElementId;
 
 public class SintaxAnalyzer {
 
-	/*A ideia que usei foi fazer um encadeamento de chamadas de
-	 *  metodos para poder identificar os elementos da gramatica mediante
-	 *   a lista de lexemas que é recebida pelo construtor.
-	 */
-	
-	/*Vou empilhando os elementos que são possiveis reconhecer até que seja 
-	 * possivel formar um elemento da gramatica e esses elementos são desempilhados
-	 *  para formar um elemento de mais alto nivel.
-	 */
-	
-	/*AINDA NAO ESTA COMPLETO. AINDA FALTA TESTAR OUTROS CASOS, IR PREENCHENDO
-	 *  A TABELA DE SIMBOLOS E INSERIR AS EXCEÇÕES
-	 */
-	
+
 	private static Stack<SintaxElement> stack;
 	private static List<Lexem> list;
 	
-	
-	// Retorna um unico elemento, que deve ser do tipo PROGRAMA, exceto se o parse não der certo
-	/**
-	 * @return (SintaxElement e)
-	 * e.getId() == SintaxElementId.PROGRAMA 
-	 */
 	public static SintaxElement parseLexems(List<Lexem> l) throws Error {
 		
-		if (stack==null)list=l;
-		if (stack==null)stack=new Stack<SintaxElement>();
-				
+		if (list==null)list=l;
+		if (stack==null)stack=new Stack<SintaxElement>();		
+		
+		while (!reconhece_programa()){//...	
+			
+			stack.push(new SintaxElement(list.remove(0)));
+			
+		}
+		
 		
 		if (reconhece_programa()){
-			
-			System.out.println("Programa reconhecido");
-			return stack.get(0);
-			
-		}		
-		System.out.println("Programa não reconhecido");
-		return null;		
-	}
+			parseLexems(list);
+		}
+		if (stack.size()==1 && list.size()==0){
+			return stack.pop();
+		}
 		
+		return null;		
+				
+	}
+
 	private static boolean reconhece_programa(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		
-		if ( list.size()==0) return true;
-		
-		//pode ser que tenha mais que uma definicao.
-		/*enquanto reconhecer uma definição seguido de ";" desempilha para 
-		 * formar no fim formar um elemento PROGRAMA*/
-		while(reconhece_definicao()&& reconhece_semicolon()){
-            laux.add(stack.remove(0));
-            laux.add(stack.remove(0));
-            
-            if (list.size()==0){
-                stack.push(new SintaxElement(SintaxElementId.PROGRAMA, laux));
-                return true;
-            }
+		if (stack.size()>1){
+			if (stack.peek().getId()== SintaxElementId.SEMICOLON){
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				
+				 stack.push(new SintaxElement(SintaxElementId.PROGRAMA, laux));
+				return true;
+			}
 		}
 		return false;
 	}
@@ -72,615 +56,147 @@ public class SintaxAnalyzer {
 	private static boolean reconhece_definicao(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		
-		if (	reconhece_definicao_local()
-				||reconhece_definicao_global()
-				||reconhece_chamada_funcao()
-				||reconhece_exp()){
+		if(stack.size()>0){
+			if (stack.peek().getId()==SintaxElementId.CHAMADA_FUNCAO
+				||stack.peek().getId()==SintaxElementId.DEFINICAO_LOCAL
+				||stack.peek().getId()==SintaxElementId.DEFINICAO_GLOBAL
+				||stack.peek().getId()==SintaxElementId.EXP	){
+				
+				laux.add(0,stack.pop());
+				 stack.push(new SintaxElement(SintaxElementId.DEFINICAO, laux));
+				return true;
+			}
+		}
 			
-			laux.add(stack.pop());
-			stack.push(new SintaxElement(SintaxElementId.DEFINICAO, laux));	
-			return true;
+		return false;
+	}
+	
+	private static boolean reconhece_def_global(){
+		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+		
+		if (stack.size()>3 && list.size()>0){
+			if(stack.get(stack.size()-1).getId()==SintaxElementId.E
+				&& stack.get(stack.size()-2).getId()==SintaxElementId.ASSIGNMENT
+				&& stack.get(stack.size()-3).getId()==SintaxElementId.ID
+				&& stack.get(stack.size()-4).getId()==SintaxElementId.KEYWORD_LET
+				&& !(list.get(0).getId() == LexemId.KEYWORD_IN)){
+				
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				
+				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));
+			}
 		}
 		return false;
 	}
 	
-	private static boolean reconhece_definicao_local(){
+	private static boolean reconhece_def_local(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>5){
-			
-			if (	reconhece_Let()
-					&& reconhece_ID()
-					&& reconhece_Assigment()
-					&& reconhece_e()
-					&& reconhece_In()
-					&& reconhece_e()){
-				
-				//desempilha elementos  que foram empilhados nas verificações anteriores.
-				//Este trecho de código eh semelhante para o restante dos métodos
-				for (int i=5;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
-				
-				return true;
-			}
+		
+		if (stack.size()>5 &&(stack.get(stack.size()-1).getId()==SintaxElementId.E
+								&& stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_IN
+								&& stack.get(stack.size()-3).getId()==SintaxElementId.E
+								&& stack.get(stack.size()-4).getId()==SintaxElementId.ASSIGNMENT
+								&& stack.get(stack.size()-5).getId()==SintaxElementId.ID
+								&& stack.get(stack.size()-6).getId()==SintaxElementId.KEYWORD_LET)){
+								
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				laux.add(0,stack.pop());
+				 stack.push(new SintaxElement(SintaxElementId.DEFINICAO_LOCAL, laux));
+				 return true;
 		}
-		
-			return false;
-	}
-	
-	private static boolean reconhece_definicao_global(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		
-		if (list.size()>3){
-			if (	reconhece_Let()
-					&& reconhece_ID()
-					&& reconhece_Assigment()
-					&& reconhece_e()){
-				
-				for (int i=3;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				stack.push(new SintaxElement(SintaxElementId.DEFINICAO_GLOBAL, laux));	
-				return true;
-			}
-		}		
-		
-			return false;
+		return false;
 	}
 	
 	private static boolean reconhece_e(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (reconhece_exp()
-			||reconhece_definicao_local()
-			|| reconhece_def_funcao() ){
-			
-			laux.add(stack.pop());
-			stack.push(new SintaxElement(SintaxElementId.E, laux));
-			return true;	
-			
+		if (stack.size()>0 && (stack.peek().getId() == SintaxElementId.DEF_FUNCAO
+								|| stack.peek().getId() == SintaxElementId.EXP
+								||stack.peek().getId() == SintaxElementId.DEFINICAO_LOCAL)){
+								
+				laux.add(0,stack.pop());
+				 stack.push(new SintaxElement(SintaxElementId.E, laux));
+				return true;
 		}
 		return false;
 	}
 	
 	private static boolean reconhece_def_funcao(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>5){
+		
+		if (stack.size()>5 && stack.get(stack.size()-1).getId()==SintaxElementId.EXP
+							&& stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
+							&& stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE
+							&& stack.get(stack.size()-4).getId()==SintaxElementId.PAR_FORMAIS
+							&& stack.get(stack.size()-5).getId()==SintaxElementId.BRACKET_OPEN
+							&& stack.get(stack.size()-6).getId()==SintaxElementId.KEYWORD_FUN){
+				
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			stack.push(new SintaxElement(SintaxElementId.DEF_FUNCAO, laux));
+			return true;
 			
-			if (	reconhece_fun()
-					&& reconhece_bracketOpen()
-					&& reconhece_par_formais()
-					&& reconhece_bracketClose()
-					&& reconhece_arrow()
-					&& reconhece_exp()){
+		}else if (stack.size()>4 && stack.get(stack.size()-1).getId()==SintaxElementId.EXP
+								&& stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
+								&& stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE
+								&& stack.get(stack.size()-4).getId()==SintaxElementId.BRACKET_OPEN
+								&& stack.get(stack.size()-5).getId()==SintaxElementId.KEYWORD_FUN){
 				
-				for (int i=5;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			stack.push(new SintaxElement(SintaxElementId.DEF_FUNCAO, laux));
+			return true;
 				
-				stack.push(new SintaxElement(SintaxElementId.DEF_FUNCAO, laux));
-				return true;
-			}
-		}		
-			return false;
+		} 
+		
+		return false;
 	}
 	
 	private static boolean reconhece_par_formais(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 		
-		if (list.size()>2){
-			if (	reconhece_par()
-					&& reconhece_comma()
-					&& reconhece_par_formais()){
-		
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
-				return true;
-				
-			/*verificação necessária caso nem todas as verificações acima
-			tenham retornado true, porem pode ser que tenha empilhado 
-			algum elemento. Desta forma, aqui os elementos voltam para a 
-			lista permitindo serem avaliados posteriormente.*/
-			//Este trecho de código eh semelhante para outros métodos
-			}else if (stack.lastElement().getId()==SintaxElementId.PAR){
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.COMMA){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
+		if (stack.size()>0 && list.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR
+											&& !(list.get(0).getId()==LexemId.COLON)){
+			
+			while(stack.peek().getId()==SintaxElementId.COLON || stack.peek().getId()==SintaxElementId.PAR){
+				laux.add(0,stack.pop());
 			}
-				
+			
+			stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
+			return true;
 		}
-		
-		if (list.size()>0){
-			if (reconhece_par()){
-				
-				laux.add(stack.pop());	
-								
-				stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
-				return true;
-			}
-		}
-			return false;
+			
+		return false;
 	}
-
+	
 	private static boolean reconhece_par(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>2){
-			if (	reconhece_ID() 
-					&& reconhece_colon()
-					&& reconhece_tipo()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.PAR, laux));
-				return true;
-				
-			}
-		}
-		return false;
-		
-	}
+		if (stack.size()>2 && stack.get(stack.size()-1).getId()==SintaxElementId.TIPO
+							&& stack.get(stack.size()-2).getId()==SintaxElementId.COLON
+							&& stack.get(stack.size()-3).getId()==SintaxElementId.ID){
+			
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			laux.add(0,stack.pop());
+			stack.push(new SintaxElement(SintaxElementId.PAR, laux));
+			return true;
 
-	
-	private static boolean reconhece_exp(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-			if (	reconhece_exp_simples()
-					|| reconhece_match()
-					|| reconhece_if()){
-				
-				laux.add(stack.pop());
-				
-				stack.push(new SintaxElement(SintaxElementId.EXP, laux));
-				return true;
-			}
-		return false;
-	}
-	
-	private static boolean reconhece_exp_simples(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		
-		if (list.size()>2){
-			if ((reconhece_ID() || reconhece_chamada_funcao() || reconhece_const()) 
-					&& reconhece_OP() && reconhece_exp_simples()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.EXP_SIMPLES, laux));
-				return true;
-				
-			}else if (stack.lastElement().getId()==SintaxElementId.ID || stack.lastElement().getId()==SintaxElementId.CHAMADA_FUNCAO || stack.lastElement().getId()==SintaxElementId.CONST){
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.OP){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}
-		}
-		if (list.size()>0){
-			if (reconhece_const()||reconhece_ID() || reconhece_chamada_funcao()){
-				
-				laux.add(stack.pop());
-
-				stack.push(new SintaxElement(SintaxElementId.EXP_SIMPLES, laux));
-				return true;
-			}
 		}
 		
-		return false;
-	}
-	
-	private static boolean reconhece_chamada_funcao(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>3){
-			
-			if (	reconhece_ID()
-					&& reconhece_bracketOpen()
-					&& reconhece_par_reais()
-					&& reconhece_bracketClose()){
-				
-				for (int i=3;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.CHAMADA_FUNCAO, laux));
-				return true;
-				
-			}else if (stack.lastElement().getId()==SintaxElementId.ID){
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.BRACKET_OPEN){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.PAR_REAIS){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}
-		}		
 		
-		if (list.size()>2){
-			
-			if (	reconhece_ID()
-					&& reconhece_bracketOpen()
-					&& reconhece_bracketClose()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.CHAMADA_FUNCAO, laux));
-				return true;
-			}
-		}	
-			return false;
-	}
-	
-	private static boolean reconhece_par_reais(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>2){
-			
-			if (	(reconhece_ID()
-					|| reconhece_const()
-					|| reconhece_chamada_funcao())
-					&& reconhece_comma()
-					&& reconhece_par_reais()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.PAR_REAIS, laux));
-				return true;
-				
-			}else if (stack.lastElement().getId()==SintaxElementId.ID || stack.lastElement().getId()==SintaxElementId.CONST || stack.lastElement().getId()==SintaxElementId.CHAMADA_FUNCAO){
-				list.add(0,stack.pop().getLexem());	
-			}else if (stack.lastElement().getId()==SintaxElementId.COMMA){
-				list.add(0,stack.pop().getLexem());	
-				list.add(0,stack.pop().getLexem());	
-			}
-		}		
-		
-		if (list.size()>0){
-			
-			if (	reconhece_ID()
-					|| reconhece_const()
-					|| reconhece_chamada_funcao()){
-				
-					laux.add(stack.pop());
-				
-				stack.push(new SintaxElement(SintaxElementId.PAR_REAIS, laux));
-				return true;
-			}
-		}	
-		return false;		
-	}
-	
-	private static boolean reconhece_if(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		
-		if (list.size()>5){
-			if ( 	reconhece_if()
-					&& reconhece_exp()
-					&& reconhece_then()
-					&& reconhece_e()
-					&& reconhece_else()
-					&& reconhece_e()){
-				
-				for (int i=5;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.IF, laux));
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	private static boolean reconhece_match(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		
-		if (list.size()>3){
-			if (	reconhece_keymatch() 
-					&& reconhece_exp()
-					&& reconhece_with()
-					&& reconhece_match_line()){
-				
-				for (int i=3;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.MATCH, laux));
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private static boolean reconhece_match_line(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		
-		if (list.size()>4){
-			if (	reconhece_match_var() 
-					&& reconhece_arrow()
-					&& reconhece_e()
-					&& reconhece_match_bar()
-					&& reconhece_match_line()){
-				
-				for (int i=4;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.MATCH_LINE, laux));
-				return true;
-				
-			}else if (stack.lastElement().getId()==SintaxElementId.MATCH_VAR){
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.KEYWORD_ARROW){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.E){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}else if (stack.lastElement().getId()==SintaxElementId.KEYWORD_MATCHBAR){
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-				list.add(0,stack.pop().getLexem());
-			}
-		}
-		if (list.size()>2){
-			if (	reconhece_match_var() 
-					&& reconhece_arrow()
-					&& reconhece_e()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				
-				stack.push(new SintaxElement(SintaxElementId.MATCH_LINE, laux));
-				return true;
-			}
-		}
-		return false;
-	}
-	private static boolean reconhece_match_var(){
-		List<SintaxElement> laux=new LinkedList<SintaxElement>();
-		if (list.size()>2){
-			if ((reconhece_const()||reconhece_ID()||reconhece__())
-					&&reconhece_as()
-					&&reconhece_ID()){
-				
-				for (int i=2;i>=0;i--){
-					laux.add(stack.remove(stack.size()-1-i));
-				}
-				stack.push(new SintaxElement(SintaxElementId.MATCH_VAR, laux));
-				return true;
-			}
-			
-		}else if (stack.lastElement().getId()==SintaxElementId.CONST||stack.lastElement().getId()==SintaxElementId.ID||stack.lastElement().getId()==SintaxElementId.KEYWORD_JOKER){
-			list.add(0,stack.pop().getLexem());
-		}else if (stack.lastElement().getId()==SintaxElementId.KEYWORD_AS){
-			list.add(0,stack.pop().getLexem());
-			list.add(0,stack.pop().getLexem());
-		}
-		
-		if (list.size()>0){
-			if (reconhece_const()||reconhece_ID()||reconhece__()){
-				
-				laux.add(stack.pop());	
-				stack.push(new SintaxElement(SintaxElementId.MATCH_VAR, laux));
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	//verifica se o primeiro elemento da lista é um "let". Se for coloca na pilha.
-	//a mesma lógica foi empregada nos métodos seguintes para identificar outros lexemas
-	private static boolean reconhece_Let(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_LET){
-			
-			stack.push(se);
-			return true;
-		}
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_ID(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.ID){
-			stack.push(se);
-			return true;
-		}
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_Assigment(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.ASSIGNMENT){
-			stack.push(se);
-			return true;
-		}
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_In(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_IN){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_fun(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_FUN){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	
-	private static boolean reconhece_bracketOpen(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.BRACKET_OPEN){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	
-	private static boolean reconhece_bracketClose(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.BRACKET_CLOSE){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_arrow(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_ARROW){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_OP(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.OP){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_tipo(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.TIPO){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_comma(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.COMMA){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	
-	private static boolean reconhece_semicolon(){
-		if(list.size()>0){
-			SintaxElement se = new SintaxElement(list.remove(0));
-			if (se.getId() == SintaxElementId.SEMICOLON){
-				stack.push(se);
-				return true;
-			}		
-			list.add(0, se.getLexem());
-		}
-		return false;
-	}
-	
-	private static boolean reconhece_colon(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.COLON){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_const(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.CONST){
-			
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_then(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_THEN){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_else(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_ELSE){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece__(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_JOKER){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_as(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_AS){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_keymatch() {
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_MATCH){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_with() {
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_WITH){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
-		return false;
-	}
-	private static boolean reconhece_match_bar(){
-		SintaxElement se = new SintaxElement(list.remove(0));
-		if (se.getId() == SintaxElementId.KEYWORD_MATCHBAR){
-			stack.push(se);
-			return true;
-		}		
-		list.add(0, se.getLexem());
 		return false;
 	}
 }
