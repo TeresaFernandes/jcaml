@@ -25,8 +25,17 @@ public class ExpressionEvaluator {
 		Stack<Lexem> lex = new Stack<Lexem>();
 		
 		SintaxElement current;
-		while (!l.isEmpty()) {
-			current = l.getFirst();
+		boolean control = (exp.getId()==SintaxElementId.ID || exp.getId()==SintaxElementId.CONST || exp.getId()==SintaxElementId.CHAMADA_FUNCAO);
+		while (control || (l!=null && !l.isEmpty())) {
+			// Verificar, se o getLexem for null, é pq é um elemento sintático composto
+			// se o getLexem não for null, é um elemento simples, e 
+			if (control) {
+				current = exp;
+				control = false;
+			}
+			else {
+				current = l.removeFirst(); 
+			}
 			Variable reference;
 			switch (current.getId()) {
 				case CHAMADA_FUNCAO:
@@ -92,7 +101,7 @@ public class ExpressionEvaluator {
 							r.setValue(parseList(current.getLexem().getLex()));
 							break;
 					}
-					return r;
+					break;
 					
 				case IF:
 					Variable value = evalue(scope,current.getLexems().get(1));
@@ -113,6 +122,18 @@ public class ExpressionEvaluator {
 					Variable match_v = evalue(scope,current.getLexems().get(1));
 					// TODO arrumar aqui depois, tem que verificar os tipos de todos os <e>
 					break;
+					
+				case ID:
+					String vName = current.getLexem().getLex();
+					r = scope.getElement(vName);
+					break;
+					
+				case EXP_SIMPLES:
+					// TODO
+					// Verificar todos os tipos, eles têm de ser iguais
+					// Verificar enquanto opera, para ganhar tempo
+					break;
+					
 			}
 		}
 		

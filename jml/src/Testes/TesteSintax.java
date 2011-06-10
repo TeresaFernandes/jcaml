@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import symbolTable.Table;
+import symbolTable.VarType;
 import symbolTable.Variable;
 import interpreter.ExpressionEvaluator;
 import CommonClasses.Error;
@@ -13,7 +14,9 @@ import CommonClasses.SintaxElementId;
 
 public class TesteSintax {
 	public static void main(String[] arg) {
-		Lexem l = new Lexem("[2,7,'o']");
+
+		// Teste de interpretação do tipo CONST	
+		Lexem l = new Lexem("[2,7,2]");
 		try {
 			l.evalue();
 		} catch (Error e) {
@@ -36,6 +39,27 @@ public class TesteSintax {
 			h.printStackTrace();
 		}
 		
+		// Teste de interpretação do tipo ID		
+		Variable v = new Variable("x");
+		v.setType(VarType.INT_TYPE);
+		v.setValue("25.1");
+		Table scope = new Table();
+		scope.insert(v);
 		
+		Lexem var = new Lexem("x");
+		try {
+			var.evalue();
+			SintaxElement se = new SintaxElement(var);
+			List<SintaxElement> lol = new LinkedList<SintaxElement>();
+			lol.add(se);
+			SintaxElement see = new SintaxElement(SintaxElementId.E, lol);
+			
+			Variable x = ExpressionEvaluator.evalue(scope,see);
+			System.out.println(x.getValue());
+			System.out.println(x.getType());
+			
+		} catch(Error eee){
+			eee.printStackTrace();
+		}
 	}
 }
