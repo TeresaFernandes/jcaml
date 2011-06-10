@@ -16,7 +16,7 @@ public class TesteSintax {
 	public static void main(String[] arg) {
 
 		// Teste de interpretação do tipo CONST	
-		Lexem l = new Lexem("[2,7,2]");
+		Lexem l = new Lexem("[[2],[7],[2]]");
 		try {
 			l.evalue();
 		} catch (Error e) {
@@ -61,5 +61,6 @@ public class TesteSintax {
 		} catch(Error eee){
 			eee.printStackTrace();
 		}
+		
 	}
 }

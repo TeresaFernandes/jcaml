@@ -2,9 +2,6 @@ package interpreter;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-
-import org.omg.CORBA.UNKNOWN;
 
 import CommonClasses.*;
 import CommonClasses.Error;
@@ -22,7 +19,6 @@ public class ExpressionEvaluator {
 		}*/
 		
 		LinkedList<SintaxElement> l = (LinkedList<SintaxElement>) exp.getLexems();
-		Stack<Lexem> lex = new Stack<Lexem>();
 		
 		SintaxElement current;
 		boolean control = (exp.getId()==SintaxElementId.ID || exp.getId()==SintaxElementId.CONST || exp.getId()==SintaxElementId.CHAMADA_FUNCAO);
@@ -110,7 +106,7 @@ public class ExpressionEvaluator {
 						error.setLine(current.getLexems().get(0).getLexem().getLine());
 						throw error;
 					}
-					// Se o valor de value for true 
+					// Se o valor de value for true executa o E da posição 3, senão o 5
 					return evalue(
 							scope,
 							current.getLexems().get(
@@ -119,7 +115,7 @@ public class ExpressionEvaluator {
 							);
 					
 				case MATCH: 
-					Variable match_v = evalue(scope,current.getLexems().get(1));
+					//Variable match_v = evalue(scope,current.getLexems().get(1));
 					// TODO arrumar aqui depois, tem que verificar os tipos de todos os <e>
 					break;
 					
@@ -132,6 +128,31 @@ public class ExpressionEvaluator {
 					// TODO
 					// Verificar todos os tipos, eles têm de ser iguais
 					// Verificar enquanto opera, para ganhar tempo
+					// Os operadores também devem ser compatíveis
+					
+					// Transformar tudo em valores CONST, e passar para o solve
+					List<SintaxElement> operandos = current.getLexems();
+					List<SintaxElement> operandosConst = new LinkedList<SintaxElement>();
+					for (int a=0; a<operandos.size();a++) {
+						SintaxElement fse = operandos.get(a);
+						// Se não for operador, transformar para CONST
+						if (operandos.get(a).getId()!=SintaxElementId.OP) {
+							Variable vr = evalue(scope,operandos.get(a));
+							String str = (String) vr.getValue();
+							Lexem lex = new Lexem(str);
+							lex.evalue();
+							fse = new SintaxElement(lex);
+							// Checar
+							if (fse.getId()!=SintaxElementId.CONST) {
+								System.out.println("Erro, tipo do elemento é " + fse.getId());
+							}
+						}
+						// Se for operador ele só faz jogar aqui dentro
+						operandosConst.add(fse);
+					}
+					
+					// Passando para o solve
+					r = Calculator.solve(operandosConst);
 					break;
 					
 			}
@@ -188,7 +209,6 @@ public class ExpressionEvaluator {
 			SintaxElement funExp = (SintaxElement) funcao.getValue();
 			return evalue(newScope,funExp);
 			// TODO testar
-			// TODO PAREI AQUI
 			
 		} catch (Error e) {
 			e.setLine(funlist.get(0).getLexem().getLine());
@@ -214,8 +234,16 @@ public class ExpressionEvaluator {
 		return v;
 	}
 
-	private static Variable defaultFunctionCall(Table scope, List<SintaxElement> parameters, String name) {
-		if (name.compareToIgnoreCase("abs")==0) {}
+	private static Variable defaultFunctionCall(Table scope, List<SintaxElement> parameters, String name) throws Error {
+		if (name.compareToIgnoreCase("abs")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE || v.getType()!=VarType.INT_TYPE) {
+				// TODO PAREI AKI
+				//Error r = new Error
+			}
+			float f = Float.parseFloat((String)v.getValue());
+			v.setValue(String.valueOf(Math.abs(f)));
+		}
 		else if (name.compareToIgnoreCase("ceil")==0) {}
 		else if (name.compareToIgnoreCase("floor")==0) {}
 		else if (name.compareToIgnoreCase("sqrt")==0) {}
@@ -253,18 +281,6 @@ public class ExpressionEvaluator {
 		else if (name.compareToIgnoreCase("print_char")==0) {}
 		
 		// TODO
-		return null;
-	}
-
-	private static VarType typeFromLex(Lexem l) {
-		switch (l.getId()) {
-			case TYPE_BOOL: return VarType.BOOL_TYPE;
-			case TYPE_FLOAT: return VarType.FLOAT_TYPE;
-			case TYPE_CHAR: return VarType.CHAR_TYPE;
-			case TYPE_INT: return VarType.INT_TYPE;
-			case TYPE_LIST: return VarType.LIST_TYPE;
-			case TYPE_STRING: return VarType.STRING_TYPE;
-		}
 		return null;
 	}
 	
@@ -351,4 +367,5 @@ public class ExpressionEvaluator {
 		// TODO depois
 		return vars;
 	}
+	
 }

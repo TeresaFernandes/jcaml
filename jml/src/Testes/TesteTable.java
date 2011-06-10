@@ -41,7 +41,7 @@ public class TesteTable {
 		}
 		
 		// coloque aqui o coisa que vc quer testar
-		String list = "[2.5, 12., '\n']";
+		String list = "[2.5, 12., 12.]";
 		try {
 			Lexem lex = new Lexem(list);
 			lex.evalue();
