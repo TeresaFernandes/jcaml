@@ -308,7 +308,7 @@ public class SintaxAnalyzer {
                                               || stack.get(stack.size()-2).getId()==SintaxElementId.CONST
                                               || stack.get(stack.size()-2).getId()==SintaxElementId.CHAMADA_FUNCAO)){
 
-                          if (stack.get(stack.size()-2).getId()==SintaxElementId.ID && stack.size()>2 && !(stack.get(stack.size()-1).getId()==SintaxElementId.KEYWORD_LET)){break;} //testa se eh uma declaração
+                          if (stack.get(stack.size()-1).getId()==SintaxElementId.ASSIGNMENT && stack.size()>2 && (stack.get(stack.size()-3).getId()==SintaxElementId.KEYWORD_LET)){break;} //testa se eh uma declaração
                           
                           laux.add(0,stack.pop());
                           laux.add(0,stack.pop());
@@ -396,6 +396,25 @@ public class SintaxAnalyzer {
                                   && stack.get(stack.size()-5).getId()==SintaxElementId.EXP
                                   && stack.get(stack.size()-6).getId()==SintaxElementId.KEYWORD_IF){
 
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    stack.push(new SintaxElement(SintaxElementId.IF, laux));
+                    return true;
+		}
+
+                if(stack.size()>6 && stack.get(stack.size()-1).getId()==SintaxElementId.BRACKET_CLOSE
+                                  && stack.get(stack.size()-2).getId()==SintaxElementId.BRACKET_OPEN
+                                  && stack.get(stack.size()-3).getId()==SintaxElementId.KEYWORD_ELSE
+                                  && stack.get(stack.size()-4).getId()==SintaxElementId.E
+                                  && stack.get(stack.size()-5).getId()==SintaxElementId.KEYWORD_THEN
+                                  && stack.get(stack.size()-6).getId()==SintaxElementId.EXP
+                                  && stack.get(stack.size()-7).getId()==SintaxElementId.KEYWORD_IF){
+
+                    laux.add(0,stack.pop());
                     laux.add(0,stack.pop());
                     laux.add(0,stack.pop());
                     laux.add(0,stack.pop());

@@ -3,10 +3,13 @@ package userInterface;
 //import java.io.BufferedWriter;
 //import java.io.FileWriter;
 //import java.io.IOException;
+import interpreter.ExpressionEvaluator;
+
 import java.util.LinkedList;
 
 import CommonClasses.Lexem;
 import CommonClasses.Error;
+import CommonClasses.SintaxElement;
 
 import sintaticalAnalyzer.SintaxAnalyzer;
 import symbolTable.Table;
@@ -34,9 +37,16 @@ public class Main {
 				Lexem x = l.get(a);
 				System.out.println(x.getLex() + "\t" + x.getId());
 			}*/
-			SintaxAnalyzer.parseLexems(l);
 			
+			SintaxElement se = SintaxAnalyzer.parseLexems(l);
+			if (se!=null){
+			Table t = new Table();
+			ExpressionEvaluator.evalue(t, se);
 			
+			for (int i =0 ; i< t.table.size();i++){
+				System.out.println( t.table.get(i).getName() + "  " +t.table.get(i).getType());
+			}
+			}
 			
 		} catch (Error e) {
 			// TODO Auto-generated catch block
