@@ -155,6 +155,7 @@ public class ExpressionEvaluator {
 						SintaxElement fse = operandos.get(a);
 						// Se não for operador e nem consta, transformar para CONST
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
+							System.out.println(operandos.get(a));							
 							Variable vr = evalue(scope,operandos.get(a));
 							String str = (String) vr.getValue();
 							Lexem lex = new Lexem(str);

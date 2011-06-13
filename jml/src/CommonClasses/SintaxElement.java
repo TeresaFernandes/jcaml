@@ -100,4 +100,18 @@ public class SintaxElement {
 		if (lexem==null) return elements.get(0).getLexem();
 		return this.lexem;
 	}
+	
+	public String toString() {
+		String r = "";
+		if (lexem!=null) {
+			r = r+ lexem.getLex() + " ("+  getId() + ")";
+		}
+		else {
+			r="{["+ id +"]";
+			for (int a=0;a<elements.size();a++) {
+				r = r+ elements.get(a).toString();
+			}
+		}
+		return r+ (r.endsWith("}")?"":"}");
+	}
 }

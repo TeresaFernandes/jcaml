@@ -65,4 +65,8 @@ public class Variable {
 			this.value.add(value);
 		}
 	}
+	
+	public String toString() {
+		return name+"("+type+")="+value;
+	}
 }
