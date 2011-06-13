@@ -199,7 +199,7 @@ public class Analyzer {
 				while (!currentLine.isEmpty()) { // Percorrer todas as linha, ignorando linhas em branco
 					currentLine = removeBlankSpaces(currentLine);
 					if (currentLine.isEmpty()) break;
-					if (currentLine.startsWith("//")) continue; // Ignora comentários
+					if (currentLine.startsWith("//")) break; // Ignora comentários
 					
 					index = -1;
 					try {
