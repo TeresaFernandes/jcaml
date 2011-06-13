@@ -67,6 +67,6 @@ public class Variable {
 	}
 	
 	public String toString() {
-		return name+"("+type+")="+value;
+		return name+" ("+type+") value: "+value;
 	}
 }

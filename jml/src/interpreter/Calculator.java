@@ -21,12 +21,13 @@ public class Calculator {
 		// Associativa a esquerda para facilitar minha vida
 		// Tem dois ou mais elementos
 		while (se.size()!=1) {
+			Variable v = new Variable("");
 			first = se.remove(0); // Pegar os dois primeiros para avaliar
 			second = se.remove(1);
 			// Operadores unários
 			if (first.getId()==SintaxElementId.OP && first.getLexem().isUnaryOperator()) {
 				Lexem lex = first.getLexem();
-				Variable v = new Variable("");
+				v = new Variable("");
 				if (lex.getLex().compareTo("~-")==0) { // Inteiro
 					if (typeFromLex(second.getLexem())==VarType.INT_TYPE) {
 						v = variableFromElement(second);
@@ -59,26 +60,30 @@ public class Calculator {
 				
 			}
 		}
-		result = variableFromElement(se.get(0));
-		
-		return result;
+		return variableFromElement(se.get(0));
 	}
 	
 
-	private static Variable variableFromElement(SintaxElement sintaxElement) {
-		// TODO Auto-generated method stub
-		return null;
+	private static Variable variableFromElement(SintaxElement sintaxElement) throws Error {
+		//System.out.println("Coisa : " + sintaxElement);
+		Variable v = new Variable("");
+		Lexem l = sintaxElement.getLexem();
+		l.evalue();
+		//System.out.println(l.getId());
+		v.setType(typeFromLex(l));
+		v.setValue(l.getLex());
+		return v;
 	}
 
 
 	private static VarType typeFromLex(Lexem l) {
 		switch (l.getId()) {
-			case TYPE_BOOL: return VarType.BOOL_TYPE;
-			case TYPE_FLOAT: return VarType.FLOAT_TYPE;
-			case TYPE_CHAR: return VarType.CHAR_TYPE;
-			case TYPE_INT: return VarType.INT_TYPE;
-			case TYPE_LIST: return VarType.LIST_TYPE;
-			case TYPE_STRING: return VarType.STRING_TYPE;
+			case BOOL_VALUE: return VarType.BOOL_TYPE;
+			case FLOAT_VALUE: return VarType.FLOAT_TYPE;
+			case CHAR_VALUE: return VarType.CHAR_TYPE;
+			case INT_VALUE: return VarType.INT_TYPE;
+			case LIST: return VarType.LIST_TYPE;
+			case STRING_VALUE: return VarType.STRING_TYPE;
 		}
 		return null;
 	}

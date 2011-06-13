@@ -43,9 +43,7 @@ public class Main {
 			Table t = Analyzer.s;
 			System.out.println(ExpressionEvaluator.evalue(t,se));
 			
-			for (int i =0 ; i< t.table.size();i++){
-				System.out.println( t.table.get(i).getName() + "  " +t.table.get(i).getType());
-			}
+			
 			}
 			
 		} catch (Error e) {
@@ -56,7 +54,7 @@ public class Main {
 		System.out.println("\n\tSymbol Table:");
 		Table s = Analyzer.s;
 		for (int a=0;a<s.table.size();a++) {
-			System.out.println(s.table.get(a).getName()+ "\t" + s.table.get(a).getType());
+			System.out.println(s.table.get(a));
 		}
 	}
 
