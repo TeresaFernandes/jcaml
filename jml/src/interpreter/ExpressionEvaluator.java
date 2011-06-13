@@ -138,6 +138,10 @@ public class ExpressionEvaluator {
 					r = scope.getElement(vName);
 					break;
 					
+				case EXP:
+					// TODO FAZER ISSO URGENTE
+					System.out.println("Pobrema aki");
+					// Continua para pegar a conjunto de instruções abaixo, faz a mesma coisa
 				case EXP_SIMPLES:
 					// TODO
 					// Verificar todos os tipos, eles têm de ser iguais
@@ -149,8 +153,8 @@ public class ExpressionEvaluator {
 					List<SintaxElement> operandosConst = new LinkedList<SintaxElement>();
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
-						// Se não for operador, transformar para CONST
-						if (operandos.get(a).getId()!=SintaxElementId.OP) {
+						// Se não for operador e nem consta, transformar para CONST
+						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
 							Variable vr = evalue(scope,operandos.get(a));
 							String str = (String) vr.getValue();
 							Lexem lex = new Lexem(str);
@@ -172,9 +176,6 @@ public class ExpressionEvaluator {
 				case E:
 					//System.out.println(current.getFirstLexem().getId());
 					return evalue(scope,current.getFirstLexem());
-				case EXP:
-					// TODO FAZER ISSO URGENTE
-					System.out.println("Pobrema aki");
 			}
 		//}
 		
