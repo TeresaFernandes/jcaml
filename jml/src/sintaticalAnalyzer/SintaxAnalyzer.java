@@ -327,6 +327,8 @@ public class SintaxAnalyzer {
                           laux.add(0,stack.pop());
                       }
 
+                      if (stack.size()>0 && stack.peek().getId()==SintaxElementId.OP) laux.add(0,stack.pop()); //pedreiragem para deixar passar uma expressão que começa com um operador
+                      
                       stack.push(new SintaxElement(SintaxElementId.EXP_SIMPLES, laux));
                       return true;
                 }
