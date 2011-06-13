@@ -1,4 +1,4 @@
 
-let x = 5;
-let z = true;
-let h = function (x:int) -> x+2;
+//let x = function (xis:int) -> xis+2;
+let x = 3;
+let z = if x==3 then 5 else 0;

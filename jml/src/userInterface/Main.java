@@ -56,6 +56,7 @@ public class Main {
 		for (int a=0;a<s.table.size();a++) {
 			System.out.println(s.table.get(a));
 		}
+		
 	}
 
 }

@@ -65,13 +65,14 @@ public class Lexem {
 		else if (lex.compareTo("/")==0) { id = LexemId.OPERATOR_DIV; return; }
 		else if (lex.compareTo("%")==0) { id = LexemId.OPERATOR_MOD; return; }
 		else if (lex.compareTo("^")==0) { id = LexemId.OPERATOR_POW; return; }
+		else if (lex.compareTo("<>")==0) { id = LexemId.OPERATOR_NONEQUAL; return; }
+		else if (lex.compareTo("!=")==0) { id = LexemId.OPERATOR_NONEQUAL; return; }
 		else if (lex.compareTo("!")==0) { id = LexemId.OPERATOR_NOT; return; }
 		else if (lex.compareTo("+.")==0) { id = LexemId.OPERATOR_SUM; return; }
 		else if (lex.compareTo("-.")==0) { id = LexemId.OPERATOR_SUB; return; }
 		else if (lex.compareTo("*.")==0) { id = LexemId.OPERATOR_MUL; return; }
 		else if (lex.compareTo("/.")==0) { id = LexemId.OPERATOR_DIV; return; }
 		else if (lex.compareTo("==")==0) { id = LexemId.OPERATOR_EQUAL; return; }
-		else if (lex.compareTo("<>")==0) { id = LexemId.OPERATOR_NONEQUAL; return; }
 		else if (lex.compareTo(">")==0) { id = LexemId.OPERATOR_GREATERTHAN; return; }
 		else if (lex.compareTo("<")==0) { id = LexemId.OPERATOR_LESSTHAN; return; }
 		else if (lex.compareTo(">=")==0) { id = LexemId.OPERATOR_GREATEREQUALTHAN; return; }

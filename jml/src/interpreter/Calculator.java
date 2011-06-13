@@ -88,11 +88,11 @@ public class Calculator {
 				if (type!=VarType.UNKNOWN) { // Operador NÃO depende dos operandos (igual à, e diferente de)
 					if (typeFromLex(first.getLexem())!=type) { // Se o tipo do primeiro for diferente do operador 
 						Error r = new Error(20);
-						r.setExtra(" " + second.getLexem().getLex() + " Expected " + type + " got " + typeFromLex(second.getLexem()));
+						r.setExtra(" " + second.getLexem().getLex() + " Expected " + type + " got " + typeFromLex(first.getLexem()));
 						r.setLine(first.getLexem().getLine());
 						throw r;
 					}
-					if (typeFromLex(second.getLexem())!=type) { // Verificação do tipo do segundo
+					if (typeFromLex(third.getLexem())!=type) { // Verificação do tipo do segundo
 						Error r = new Error(20);
 						r.setExtra(" " + second.getLexem().getLex() + " Expected " + type + " got " + typeFromLex(second.getLexem()));
 						r.setLine(first.getLexem().getLine());
@@ -120,34 +120,37 @@ public class Calculator {
 				Variable v2 = variableFromElement(third);
 				switch (second.getLexem().getId()) {
 					case OPERATOR_AND:
-						v.setValue((Boolean)v1.getValue() && (Boolean)v2.getValue()); 
+						v.setValue(String.valueOf(Boolean.parseBoolean((String)v1.getValue()) && Boolean.parseBoolean((String)v2.getValue()))); 
 						break;
 					case OPERATOR_OR:
-						v.setValue((Boolean)v1.getValue() || (Boolean)v2.getValue()); 
+						v.setValue(String.valueOf(Boolean.parseBoolean((String)v1.getValue()) || Boolean.parseBoolean((String)v2.getValue()))); 
 						break;
 
-					case OPERATOR_EQUAL: // Fazer depois
+					case OPERATOR_EQUAL:
+						v.setValue(String.valueOf(((String)v1.getValue()).compareTo((String)v2.getValue())==0));
+						break;
 					case OPERATOR_NONEQUAL: // Fazer depois TODO 
+						v.setValue(String.valueOf(((String)v1.getValue()).compareTo((String)v2.getValue())!=0));
 						break;
 					
 					case OPERATOR_GREATEREQUALTHAN:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() >= (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() >= (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) >= Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) >= Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_GREATERTHAN:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() > (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() > (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) > Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) > Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_LESSEQUALTHAN:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() <= (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() <= (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) <= Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) <= Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_LESSTHAN:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() < (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() < (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) < Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) < Integer.parseInt((String)v2.getValue())));
 						break;
 						
 					case OPERATOR_LISTAPPEND:
@@ -157,35 +160,38 @@ public class Calculator {
 						break;
 						
 					case OPERATOR_MOD: 
-						v.setValue((Integer)v1.getValue() % (Integer)v2.getValue());
+						v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) % Integer.parseInt((String)v2.getValue())));
 						break;
 						
 					case OPERATOR_MUL:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() * (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() * (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) * Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) * Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_DIV: 
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() / (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() / (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) / Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) / Integer.parseInt((String)v2.getValue())));
 						break;
 					
 					case OPERATOR_POW:
-						v.setValue(Math.pow((Float)v1.getValue(), (Float)v2.getValue()));
+						v.setValue(Math.pow(Float.parseFloat((String)v1.getValue()), Float.parseFloat((String)v2.getValue())));
 						break;
 						
 					case OPERATOR_SUB:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() - (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() - (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) - Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) - Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_SUM:
-						if (type==VarType.FLOAT_TYPE) v.setValue((Float)v1.getValue() + (Float)v2.getValue());
-						else v.setValue((Integer)v1.getValue() + (Integer)v2.getValue());
+						if (type==VarType.FLOAT_TYPE) v.setValue(String.valueOf(Float.parseFloat((String)v1.getValue()) + Float.parseFloat((String)v2.getValue())));
+						else v.setValue(String.valueOf(Integer.parseInt((String)v1.getValue()) + Integer.parseInt((String)v2.getValue())));
 						break;
 
 					case OPERATOR_STRCONCAT:
-						v.setValue((String)v1.getValue() + (String)v2.getValue());
+						// Remover a ultima aspa do primeiro e a 
+						String s1 = (String)v1.getValue();
+						String s2 = (String)v2.getValue();
+						v.setValue(s1.substring(0, s1.length()-1) + s2.substring(1,s2.length()));
 						break;
 						
 						// Os dois abaixo dão erro, pois são unários
@@ -198,10 +204,19 @@ public class Calculator {
 						throw r;
 				}
 			}
+			se.add(0,elementFromVariable(v));
 		}
 		return variableFromElement(se.get(0));
 	}
 	
+
+	private static SintaxElement elementFromVariable(Variable v) throws Error {
+		Lexem l = new Lexem((String)v.getValue());
+		l.evalue();
+		SintaxElement s = new SintaxElement(l);
+		return s;
+	}
+
 
 	private static Variable variableFromElement(SintaxElement sintaxElement) throws Error {
 		//System.out.println("Coisa : " + sintaxElement);
@@ -240,7 +255,7 @@ public class Calculator {
 			case OPERATOR_LISTAPPEND: return VarType.LIST_TYPE;
 			case OPERATOR_LISTCONCAT: return VarType.LIST_TYPE;
 			case OPERATOR_MOD: return VarType.INT_TYPE;
-			case OPERATOR_STRCONCAT:
+			case OPERATOR_STRCONCAT: return VarType.STRING_TYPE;
 			case OPERATOR_GREATEREQUALTHAN:
 			case OPERATOR_GREATERTHAN:
 			case OPERATOR_LESSEQUALTHAN:

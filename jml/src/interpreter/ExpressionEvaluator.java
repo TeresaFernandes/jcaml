@@ -124,7 +124,7 @@ public class ExpressionEvaluator {
 					return evalue(
 							scope,
 							current.getLexems().get(
-									(Boolean.getBoolean((String) value.getValue())? 3 : 5)
+									(Boolean.getBoolean((String) value.getValue())? 5 : 3)
 								)
 							);
 					

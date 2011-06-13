@@ -76,6 +76,7 @@ public class Analyzer {
 			|| s.startsWith("<=")
 			|| s.startsWith(">=")
 			|| s.startsWith("<>")
+			|| s.startsWith("!=")
 			|| s.startsWith("||")
 			|| s.startsWith("&&")
 			|| s.startsWith("==")) return 1;
