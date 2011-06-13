@@ -97,6 +97,7 @@ public class SintaxElement {
 	}
 	
 	public Lexem getLexem() {
+		if (lexem==null) return elements.get(0).getLexem();
 		return this.lexem;
 	}
 }

@@ -1,1 +1,1 @@
-let x = function (x:int) -> x*2;
+let x = function (y:int) -> y*2;

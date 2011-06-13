@@ -12,22 +12,64 @@ import CommonClasses.Error;
 public class Calculator {
 
 	
-	static Variable solve(List<SintaxElement> se) {
+	static Variable solve(List<SintaxElement> se) throws Error {
 		// Esta lista contém apenas CONST e OP
 		Variable result = new Variable("");
 		
-		// Colocar tudo na forma pós-fixa, pra facilitar minha vida
-		Stack<SintaxElement> pilha = new Stack<SintaxElement>();
-
-		SintaxElement e;
-		while (!se.isEmpty()) {
-			e = se.remove(0);
-			
+		SintaxElement first;
+		SintaxElement second;
+		// Associativa a esquerda para facilitar minha vida
+		// Tem dois ou mais elementos
+		while (se.size()!=1) {
+			first = se.remove(0); // Pegar os dois primeiros para avaliar
+			second = se.remove(1);
+			// Operadores unários
+			if (first.getId()==SintaxElementId.OP && first.getLexem().isUnaryOperator()) {
+				Lexem lex = first.getLexem();
+				Variable v = new Variable("");
+				if (lex.getLex().compareTo("~-")==0) { // Inteiro
+					if (typeFromLex(second.getLexem())==VarType.INT_TYPE) {
+						v = variableFromElement(second);
+						Integer value = (Integer) v.getValue();
+						v.setValue(value * -1);
+					}
+				}
+				else if (lex.getLex().compareTo("~-.")==0) { // Float
+					if (typeFromLex(second.getLexem())==VarType.FLOAT_TYPE) {
+						v = variableFromElement(second);
+						Float value = (Float) v.getValue();
+						v.setValue(value * -1);
+					}					
+				}
+				else if (lex.getLex().compareTo("!")==0) { // Bool
+					if (typeFromLex(second.getLexem())==VarType.BOOL_TYPE) {
+						v = variableFromElement(second);
+						Boolean value = (Boolean) v.getValue();
+						v.setValue(!value);
+					}
+				}
+				// Removes os dois valores, e coloca o novo elemento
+				Lexem newLex = new Lexem((String) v.getValue());
+				newLex.evalue();
+				SintaxElement newElement = new SintaxElement(newLex);
+				se.add(0, newElement);
+			}
+			// Operadores binários
+			else { // Tratar todas as outras operações aki
+				
+			}
 		}
+		result = variableFromElement(se.get(0));
 		
 		return result;
 	}
 	
+
+	private static Variable variableFromElement(SintaxElement sintaxElement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	private static VarType typeFromLex(Lexem l) {
 		switch (l.getId()) {
