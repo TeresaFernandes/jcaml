@@ -49,6 +49,7 @@ public class Error extends Exception {
 			case 16: message = "Invalid function parameters"; break;
 			case 17: message = "Invalid parameter value"; break;
 			case 18: message = "Unknown operator"; break;
+			case 19: message = "Sintax Error"; break;
 				//...
 			default: message = "Unknown error";
 		}

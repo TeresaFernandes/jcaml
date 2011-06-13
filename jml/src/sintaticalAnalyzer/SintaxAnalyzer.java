@@ -8,6 +8,7 @@ import CommonClasses.Lexem;
 import CommonClasses.LexemId;
 import CommonClasses.SintaxElement;
 import CommonClasses.SintaxElementId;
+import CommonClasses.Error;
 
 public class SintaxAnalyzer {
 
@@ -41,12 +42,24 @@ public class SintaxAnalyzer {
 			System.out.print("Reconheceu");
 			return stack.pop();
 		}else{
-			System.out.print("Não Reconheceu");
+                        System.out.print("Não Reconheceu");
+                        lançaExceção();
 		}
 
 		return null;
 
 	}
+
+        private static void lançaExceção() throws Error{
+            List<SintaxElement> l =stack.peek().getLexems();
+            while (l.get(0).getLexems()!=null){
+                l=l.get(0).getLexems();
+            }
+            Error e = new Error(19);
+            e.setLine(l.get(0).getLexem().getLine());
+            e.setExtra(". Proximo a \"" + l.get(0).getLexem().getLex()+"\"");
+            throw e;
+        }
 
         /*Centraliza as chamadas de função ( questão de organização só)*/
         private static boolean reconheceALL(){
