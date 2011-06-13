@@ -40,8 +40,8 @@ public class Main {
 			
 			SintaxElement se = SintaxAnalyzer.parseLexems(l);
 			if (se!=null){
-			Table t = new Table();
-			ExpressionEvaluator.evalue(t, se);
+			Table t = Analyzer.s;
+			System.out.println(ExpressionEvaluator.evalue(t,se));
 			
 			for (int i =0 ; i< t.table.size();i++){
 				System.out.println( t.table.get(i).getName() + "  " +t.table.get(i).getType());

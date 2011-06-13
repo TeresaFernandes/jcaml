@@ -18,10 +18,10 @@ public class ExpressionEvaluator {
 			throw new Error(10);
 		}*/
 		
-		LinkedList<SintaxElement> l = (LinkedList<SintaxElement>) exp.getLexems();
+//		LinkedList<SintaxElement> l = (LinkedList<SintaxElement>) exp.getLexems();
 		
-		SintaxElement current;
-		boolean control = (exp.getId()==SintaxElementId.ID || exp.getId()==SintaxElementId.CONST || exp.getId()==SintaxElementId.CHAMADA_FUNCAO);
+		SintaxElement current = exp;
+/*		boolean control = (exp.getId()==SintaxElementId.ID || exp.getId()==SintaxElementId.CONST || exp.getId()==SintaxElementId.CHAMADA_FUNCAO);
 		while (control || (l!=null && !l.isEmpty())) {
 			// Verificar, se o getLexem for null, é pq é um elemento sintático composto
 			// se o getLexem não for null, é um elemento simples, e 
@@ -31,9 +31,22 @@ public class ExpressionEvaluator {
 			}
 			else {
 				current = l.removeFirst(); 
-			}
+			}*/
 			Variable reference;
 			switch (current.getId()) {
+				case PROGRAMA:
+					for (int a=0;a<current.getLexems().size();a++) {
+						r = evalue(scope,current.getLexems().get(a));
+					}
+					return r;
+			
+				case DEFINICAO:
+					// Print no scopo
+					/*for (int a=0;a<scope.table.size();a++) {
+						System.out.println(scope.table.get(a).getName());
+					}*/
+					return evalue(scope,current.getLexems().get(0));
+
 				case CHAMADA_FUNCAO:
 					return functionCall(scope.clone(), current); 
 				
@@ -44,13 +57,14 @@ public class ExpressionEvaluator {
 					v.setValue(current.getLexems().get(5));
 					return v;
 					
-				case DEFINICAO_GLOBAL: 
+				case DEFINICAO_GLOBAL:
 					// Nome da variável está na posição 1 da lista, ai basta pegar o lex dele
 					String varName = current.getLexems().get(1).getLexem().getLex();
 					Variable var = scope.getElement(varName); // Variável que vai ser alterada na tabela de simbolos
 					// O escopo em definição de funções não é importante
 					// Mas vou colocar só pra evitar problemas
 					reference = evalue(scope,current.getLexems().get(3));
+					
 					var.setType(reference.getType());
 					var.setAux(reference.getAux());
 					var.setValue(reference.getValue());
@@ -155,8 +169,14 @@ public class ExpressionEvaluator {
 					r = Calculator.solve(operandosConst);
 					break;
 					
+				case E:
+					//System.out.println(current.getFirstLexem().getId());
+					return evalue(scope,current.getFirstLexem());
+				case EXP:
+					// TODO FAZER ISSO URGENTE
+					System.out.println("Pobrema aki");
 			}
-		}
+		//}
 		
 		return r;
 	}

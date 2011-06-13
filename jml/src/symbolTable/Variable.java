@@ -62,7 +62,7 @@ public class Variable {
 			}
 		}
 		else { // Se for uma função, seu valor É uma lista
-			this.value = (List) value;
+			this.value.add(value);
 		}
 	}
 }
