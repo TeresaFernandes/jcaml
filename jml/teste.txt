@@ -10,3 +10,5 @@ let h = ~-. 16.8;
 abs(ceil(h));
 x(2);
 length("teresa");
+
+let j = [2,6,4]; 

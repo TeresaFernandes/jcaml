@@ -56,7 +56,9 @@ public class Main {
 		for (int a=0;a<s.table.size();a++) {
 			System.out.println(s.table.get(a));
 		}
-		
+		try {
+		System.out.println(ExpressionEvaluator.parseList("[[2,3,5],[6],[2,5,2],[4]]"));
+		}catch (Error r) {}
 	}
 
 }

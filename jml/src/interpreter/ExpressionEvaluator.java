@@ -413,7 +413,7 @@ public class ExpressionEvaluator {
 	public static List parseList(String s) throws Error {
 		// [ n,m,j,k,l ]
 		// Remover o primeiro e o ultimo elementos
-		s = s.substring(1, s.length()-1);
+/*		s = s.substring(1, s.length()-1);
 		String[] elements = s.split(",");
 		if (elements.length==0) return new LinkedList<Lexem>();
 		LinkedList<Lexem> lexems = new LinkedList<Lexem>();
@@ -435,7 +435,43 @@ public class ExpressionEvaluator {
 			}
 			list.add(valueFromLexem(lexems.get(a)));
 		}
+		return list;*/
+		
+		// Refazendo
+		s = s.substring(1,s.length()-1); // Removo o primeiro e o ultimo elemento, que são [ e ]
+		List list = new LinkedList<Lexem>();
+		int bracketCounter = 0;
+		String currentString="";
+		for (int a=0; a<s.length();a++) {
+			if (s.charAt(a)=='[')bracketCounter++;
+			else if (s.charAt(a)==']') bracketCounter--;
+			
+			if (s.charAt(a)==',' && bracketCounter==0) {
+				Lexem l = new Lexem(currentString);
+				l.evalue();
+				list.add(l);
+				currentString="";
+			}
+			else currentString=currentString+s.charAt(a);
+		}
+		Lexem l = new Lexem(currentString);
+		l.evalue();
+		list.add(l);
+		currentString="";
+		//System.out.println(list + " : " + list.size());
+		// Agora verifico se todos os tipos na lista são iguais
+		if (list.size()>0) {
+			VarType tipo = Calculator.typeFromLex((Lexem) list.get(0));
+			for (int a=0; a<list.size();a++) {
+				if (Calculator.typeFromLex((Lexem)list.get(a))!=tipo) {
+					Error r = new Error(12);
+					r.setExtra(". Expected " + tipo + " found " + Calculator.typeFromLex((Lexem)list.get(a)) + ": "+ ((Lexem)list.get(a)).getLex() );
+					throw r;
+				}
+			}
+		} // TODO parei aqui
 		return list;
+		
 	}
 	
 	private static List<SintaxElement> getFormalParameters(SintaxElement fun) {

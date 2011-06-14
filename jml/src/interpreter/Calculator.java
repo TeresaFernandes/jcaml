@@ -231,7 +231,7 @@ public class Calculator {
 	}
 
 
-	private static VarType typeFromLex(Lexem l) {
+	protected static VarType typeFromLex(Lexem l) {
 		switch (l.getId()) {
 			case BOOL_VALUE: return VarType.BOOL_TYPE;
 			case FLOAT_VALUE: return VarType.FLOAT_TYPE;
