@@ -31,7 +31,6 @@ public class Lexem {
 		else if (lex.compareToIgnoreCase("if")==0) { id = LexemId.KEYWORD_IF; return; }
 		else if (lex.compareToIgnoreCase("then")==0) { id = LexemId.KEYWORD_THEN; return; }
 		else if (lex.compareToIgnoreCase("else")==0) { id = LexemId.KEYWORD_ELSE; return; }
-		else if (lex.compareToIgnoreCase("fun")==0) { id = LexemId.KEYWORD_FUN; return; }
 		else if (lex.compareToIgnoreCase("function")==0) { id = LexemId.KEYWORD_FUN; return; }
 		else if (lex.compareToIgnoreCase("match")==0) { id = LexemId.KEYWORD_MATCH; return; }
 		else if (lex.compareToIgnoreCase("with")==0) { id = LexemId.KEYWORD_WITH; return; }
@@ -39,6 +38,7 @@ public class Lexem {
 		else if (lex.compareToIgnoreCase("rec")==0) { id = LexemId.KEYWORD_REC; return; }
 		else if (lex.compareToIgnoreCase("and")==0) { id = LexemId.KEYWORD_AND; return; }
 		// Tipos
+		else if (lex.compareToIgnoreCase("fun")==0) { id = LexemId.TYPE_FUNCTION; return; }
 		else if (lex.compareToIgnoreCase("int")==0) { id = LexemId.TYPE_INT; return; }
 		else if (lex.compareToIgnoreCase("float")==0) { id = LexemId.TYPE_FLOAT; return; }
 		else if (lex.compareToIgnoreCase("string")==0) { id = LexemId.TYPE_STRING; return; }

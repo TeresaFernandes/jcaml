@@ -70,7 +70,6 @@ public class ExpressionEvaluator {
 					var.setType(reference.getType());
 					var.setAux(reference.getAux());
 					var.setValue(reference.getValue());
-					//System.out.println("DEBUG: " + current.getLexems().get(3).getId());
 					return var;
 					
 				case DEFINICAO_LOCAL:
@@ -219,6 +218,8 @@ public class ExpressionEvaluator {
 
 			List<SintaxElement> formalParameters = funcao.getAux();
 			List<SintaxElement> realParameters = getRealParameters(funCall);
+			System.out.println("DEBUG" + formalParameters); // TODO aqui tá dando null
+			//System.out.println("DEBUG" + realParameters);
 			
 			if (formalParameters.size()!=realParameters.size()) {
 				Error r = new Error(16);
@@ -281,6 +282,7 @@ public class ExpressionEvaluator {
 			case TYPE_INT: t = VarType.INT_TYPE; break;
 			case TYPE_FLOAT: t = VarType.FLOAT_TYPE; break;
 			case TYPE_LIST: t = VarType.LIST_TYPE; break;
+			case TYPE_FUNCTION: t = VarType.FUNCTION_TYPE; break;
 		}
 		v.setType(t);
 		//System.out.println(v.getValue());
@@ -499,6 +501,7 @@ public class ExpressionEvaluator {
 		// TODO depois
 		SintaxElement par = fun.getLexems().get(2);
 		if (par.getId()==SintaxElementId.PAR_REAIS) {
+			//if (par.getFirstLexem().getId()==)
 			l = par.getLexems();
 			// Limpar a lista, remover as virgulas
 			for (int a=0;a<l.size();a++) {

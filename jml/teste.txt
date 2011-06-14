@@ -1,18 +1,22 @@
 
 let fib = function (xs:int) -> if xs<=1 then 1 else fib(xs-1) + fib(xs-2);
 
-fib(6);
+//fib(6);
 
-let x = function (x:int) -> x*2;
+//let x = function (x:int) -> x*2;
 
-let z = !true;
-let h = ~-. 16.8;
-abs(ceil(h));
-x(2);
-length("teresa");
+//let z = !true;
+//let h = ~-. 16.8;
+//abs(ceil(h));
+//x(2);
+//length("teresa");
 
-let j = [2,6,4]; 
-let oi = [[2,2], [2], [2,52,0]];
+//let j = [2,6,4]; 
+//let oi = [[2,2], [2], [2,52,0]];
 
-let k = x;
-let coisa = z;
+//l/et k = x;
+let coisa = function (hmmm: fun) -> hmmm(0);
+
+//coisa(fib);
+
+fib(5);

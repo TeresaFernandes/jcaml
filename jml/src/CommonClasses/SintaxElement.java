@@ -13,6 +13,7 @@ public class SintaxElement {
 		switch (l.getId()) {
 		case NAME: this.id = SintaxElementId.ID; break;
 		
+		case TYPE_FUNCTION:
 		case TYPE_INT:
 		case TYPE_CHAR:
 		case TYPE_STRING:
