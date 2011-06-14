@@ -51,9 +51,9 @@ public class SintaxAnalyzer {
 	}
 
         private static void lancaExcecao() throws Error{
-            List<SintaxElement> l =stack.get(0).getLexems();
-            while (l.get(0).getLexems()!=null){
-                l=l.get(0).getLexems();
+            List<SintaxElement> l =stack.peek().getLexems();
+            while (l.get(l.size()-1).getLexems()!=null){
+                l=l.get(l.size()-1).getLexems();
             }
             Error e = new Error(19);
             e.setLine(l.get(0).getLexem().getLine());
@@ -337,7 +337,7 @@ public class SintaxAnalyzer {
                      /* outras situa��es em que o <id>, <chamada_fun> ou <const> n�o deve ser "traduzidos" como um <exp_simples>:
                        quando o proximo elemento na lista eh: "(" , ")" , "as" , "OP" ou "=" */
                     if (list.size()>0 && (list.get(0).getId()==LexemId.BRACKET_OPEN
-                                            || stack.get(stack.size()-2).getId()==SintaxElementId.CHAVE_OPEN
+                                            || list.get(0).getId()==LexemId.CHAVE_OPEN
                                            // ||list.get(0).getId()==LexemId.BRACKET_CLOSE
                                             ||list.get(0).getId()==LexemId.KEYWORD_AS
                                             || new SintaxElement(list.get(0)).getId()==SintaxElementId.OP

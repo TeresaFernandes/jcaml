@@ -17,6 +17,14 @@ public class Table {
 		v1 = new Variable("floor"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("sqrt"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("length"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("uppercase"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("lowercase"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("int_of_char"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("int_of_string"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("int_of_float"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("char_of_int"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("float_of_int"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("float_of_string"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 	}
 	
 	/**
