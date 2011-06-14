@@ -370,20 +370,131 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("get")==0) {} // TODO
-		else if (name.compareToIgnoreCase("uppercase")==0) {}// TODO
-		else if (name.compareToIgnoreCase("lowercase")==0) {}// TODO
+		else if (name.compareToIgnoreCase("uppercase")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.STRING_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				throw r;
+			} else {
+				String l = ((String) v.getValue()).toUpperCase();
+				v.setValue(l);
+			}
+			return v;
+		}
+		else if (name.compareToIgnoreCase("lowercase")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.STRING_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				throw r;
+			} else {
+				String l = ((String) v.getValue()).toLowerCase();
+				v.setValue(l); 
+			}
+			return v;
+		}
 		
-		else if (name.compareToIgnoreCase("int_of_char")==0) {}// TODO
-		else if (name.compareToIgnoreCase("int_of_string")==0) {}// TODO
-		else if (name.compareToIgnoreCase("int_of_float")==0) {}// TODO
-		else if (name.compareToIgnoreCase("int_of_char")==0) {}// TODO
+		else if (name.compareToIgnoreCase("int_of_char")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.CHAR_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.CHAR_TYPE);
+				throw r;
+			} else {
+				String s = ((String) v.getValue());
+				s = s.substring(1,s.length()-1);
+				int l = s.charAt(0);
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.INT_TYPE);
+			}
+			return v;	
+		}
+		else if (name.compareToIgnoreCase("int_of_string")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.STRING_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				throw r;
+			} else {
+				String s = ((String) v.getValue());
+				s = s.substring(1,s.length()-1);
+				int l = Integer.parseInt(s);
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.INT_TYPE);
+			}
+			return v;
+		}
+		else if (name.compareToIgnoreCase("int_of_float")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				throw r;
+			} else {
+				int l = (int) Float.parseFloat((String) v.getValue());
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.INT_TYPE);
+			}
+			return v;
+		}
 		
-		else if (name.compareToIgnoreCase("char_of_int")==0) {}// TODO
+		else if (name.compareToIgnoreCase("char_of_int")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.INT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
+				throw r;
+			} else {
+				String l = "'"+Integer.parseInt((String) v.getValue()) +"'";
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.CHAR_TYPE);
+			}
+			return v;
+		}
 		
-		else if (name.compareToIgnoreCase("float_of_string")==0) {}// TODO
-		else if (name.compareToIgnoreCase("float_of_int")==0) {}// TODO
+		else if (name.compareToIgnoreCase("float_of_string")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.STRING_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				throw r;
+			} else {
+				String s = ((String) v.getValue());
+				s = s.substring(1,s.length()-1);
+				float l = Float.parseFloat(s);
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.FLOAT_TYPE);
+			}
+			return v;
+		}
+		else if (name.compareToIgnoreCase("float_of_int")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.INT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
+				throw r;
+			} else {
+				float l = (float) Integer.parseInt((String) v.getValue());
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.FLOAT_TYPE);
+			}
+			return v;
+		}
 		
-		else if (name.compareToIgnoreCase("string_of_bool")==0) {}// TODO
+		else if (name.compareToIgnoreCase("string_of_bool")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.BOOL_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.BOOL_TYPE);
+				throw r;
+			} else {
+				float l = (float) Integer.parseInt((String) v.getValue());
+				v.setValue(String.valueOf(l));
+				v.setType(VarType.FLOAT_TYPE);
+			}
+			return v;
+		}
 		else if (name.compareToIgnoreCase("string_of_char")==0) {}// TODO
 		else if (name.compareToIgnoreCase("string_of_int")==0) {}// TODO
 		else if (name.compareToIgnoreCase("string_of_float")==0) {}// TODO
