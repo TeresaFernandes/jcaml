@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import symbolTable.Table;
 import symbolTable.VarType;
 import symbolTable.Variable;
 import CommonClasses.*;
@@ -12,7 +13,7 @@ import CommonClasses.Error;
 public class Calculator {
 
 	
-	static Variable solve(List<SintaxElement> se) throws Error {
+	static Variable solve(Table scope, List<SintaxElement> se) throws Error {
 		// Esta lista contém apenas CONST e OP
 		Variable result = new Variable("");
 		
@@ -30,7 +31,7 @@ public class Calculator {
 				v = new Variable("");
 				if (lex.getLex().compareTo("~-")==0) { // Inteiro
 					if (typeFromLex(second.getLexem())==VarType.INT_TYPE) {
-						v = variableFromElement(second);
+						v = variableFromElement(scope,second);
 						Integer value = (Integer) v.getValue();
 						v.setValue(value * -1);
 					}
@@ -43,7 +44,7 @@ public class Calculator {
 				}
 				else if (lex.getLex().compareTo("~-.")==0) { // Float
 					if (typeFromLex(second.getLexem())==VarType.FLOAT_TYPE) {
-						v = variableFromElement(second);
+						v = variableFromElement(scope,second);
 						Float value = Float.parseFloat((String)v.getValue());
 						v.setValue(value * -1);
 					}					
@@ -56,7 +57,7 @@ public class Calculator {
 				}
 				else if (lex.getLex().compareTo("!")==0) { // Bool
 					if (typeFromLex(second.getLexem())==VarType.BOOL_TYPE) {
-						v = variableFromElement(second);
+						v = variableFromElement(scope,second);
 						Boolean value = Boolean.valueOf((String)v.getValue());
 						v.setValue(!value);
 					}
@@ -117,8 +118,8 @@ public class Calculator {
 				 * Note que o valor de value vai variar de acordo com o tipo,
 				 * mas isso não dá problema pq eu sempre faço cast quando precisa 
 				*/
-				Variable v1 = variableFromElement(first);
-				Variable v2 = variableFromElement(third);
+				Variable v1 = variableFromElement(scope,first);
+				Variable v2 = variableFromElement(scope,third);
 				switch (second.getLexem().getId()) {
 					case OPERATOR_AND:
 						v.setValue(String.valueOf(Boolean.parseBoolean((String)v1.getValue()) && Boolean.parseBoolean((String)v2.getValue()))); 
@@ -207,7 +208,7 @@ public class Calculator {
 			}
 			se.add(0,elementFromVariable(v));
 		}
-		return variableFromElement(se.get(0));
+		return variableFromElement(scope,se.get(0));
 	}
 	
 
@@ -219,14 +220,9 @@ public class Calculator {
 	}
 
 
-	private static Variable variableFromElement(SintaxElement sintaxElement) throws Error {
+	private static Variable variableFromElement(Table scope, SintaxElement sintaxElement) throws Error {
 		//System.out.println("Coisa : " + sintaxElement);
-		Variable v = new Variable("");
-		Lexem l = sintaxElement.getLexem();
-		l.evalue();
-		//System.out.println(l.getId());
-		v.setType(typeFromLex(l));
-		v.setValue(l.getLex());
+		Variable v = ExpressionEvaluator.evalue(scope, sintaxElement);
 		return v;
 	}
 

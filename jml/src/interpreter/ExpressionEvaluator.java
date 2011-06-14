@@ -67,10 +67,10 @@ public class ExpressionEvaluator {
 					// O escopo em definição de funções não é importante
 					// Mas vou colocar só pra evitar problemas
 					reference = evalue(scope,current.getLexems().get(3));
-					
 					var.setType(reference.getType());
 					var.setAux(reference.getAux());
 					var.setValue(reference.getValue());
+					//System.out.println("DEBUG: " + current.getLexems().get(3).getId());
 					return var;
 					
 				case DEFINICAO_LOCAL:
@@ -144,8 +144,8 @@ public class ExpressionEvaluator {
 					break;
 					
 				case EXP:
-					//System.out.println("Pobrema aki");
-					// Continua para pegar a conjunto de instruções abaixo, faz a mesma coisa
+					return evalue(scope,current.getFirstLexem());
+					
 				case EXP_SIMPLES:
 					// Verificar todos os tipos, eles têm de ser iguais
 					// Verificar enquanto opera, para ganhar tempo
@@ -184,7 +184,7 @@ public class ExpressionEvaluator {
 						// Se for operador ele só faz jogar aqui dentro
 						operandosConst.add(fse);
 					}
-					r = Calculator.solve(operandosConst);
+					r = Calculator.solve(scope,operandosConst);
 					break;
 					
 				case E:
@@ -443,25 +443,26 @@ public class ExpressionEvaluator {
 		int bracketCounter = 0;
 		String currentString="";
 		for (int a=0; a<s.length();a++) {
-			if (s.charAt(a)=='[')bracketCounter++;
+			if (s.charAt(a)=='[') bracketCounter++;
 			else if (s.charAt(a)==']') bracketCounter--;
 			
 			if (s.charAt(a)==',' && bracketCounter==0) {
 				Lexem l = new Lexem(currentString);
 				l.evalue();
 				list.add(l);
-				currentString="";
+				currentString=new String();
 			}
 			else currentString=currentString+s.charAt(a);
 		}
 		Lexem l = new Lexem(currentString);
 		l.evalue();
 		list.add(l);
-		currentString="";
+		currentString=new String();
 		//System.out.println(list + " : " + list.size());
 		// Agora verifico se todos os tipos na lista são iguais
 		if (list.size()>0) {
 			VarType tipo = Calculator.typeFromLex((Lexem) list.get(0));
+			//System.out.println(((Lexem)list.get(1)).getLex());
 			for (int a=0; a<list.size();a++) {
 				if (Calculator.typeFromLex((Lexem)list.get(a))!=tipo) {
 					Error r = new Error(12);

@@ -104,8 +104,11 @@ public class Analyzer {
 			|| s.startsWith(">")) return 0;
 		
 		if (s.startsWith("[")) { // Reconhece lista
+			int bracketCounter=1;
 			for (int a=1; a<s.length();a++) {
-				if (s.charAt(a)==']') return a;
+				if (s.charAt(a)=='[') bracketCounter++;				
+				if (s.charAt(a)==']') bracketCounter--;
+				if (bracketCounter==0) return a;
 			}
 			throw new Error(8);
 		}
