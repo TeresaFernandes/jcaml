@@ -155,13 +155,17 @@ public class ExpressionEvaluator {
 					List<SintaxElement> operandosConst = new LinkedList<SintaxElement>();
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
+
 						// Se não for operador e nem consta, transformar para CONST
-						
-						// Se for função fazer diferente
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
 							//System.out.println(operandos.get(a));							
 							Variable vr = evalue(scope,operandos.get(a));
 							//System.out.println(vr);
+							if (vr.getType()==VarType.FUNCTION_TYPE) {
+								Error error = new Error(23);
+								error.setExtra(" " +vr.getName() + " is a function. Are you trying to override " + vr.getName() + "?");
+								throw error;
+							}
 							String str = (String) vr.getValue();
 							Lexem lex = new Lexem(str);
 							lex.evalue();
@@ -200,7 +204,7 @@ public class ExpressionEvaluator {
 			if (funcao.getType()==VarType.DEFAULTFUNCTION_TYPE) {
 				// Passar o escopo, os parametros reais e o nome da função
 				if (funCall.getLexems().get(2).getId()==SintaxElementId.PAR_REAIS) {
-					return defaultFunctionCall(scope, getRealParameters(funCall), funcao.getName());
+					return defaultFunctionCall(scope.clone(), getRealParameters(funCall), funcao.getName());
 				}
 				else {
 					Error r = new Error(14);
@@ -221,7 +225,7 @@ public class ExpressionEvaluator {
 			Table newScope = scope.clone();
 			Variable var; Variable realVar;
 			for (int c=0;c<realParameters.size();c++) {
-				var = createVarFromParameter(formalParameters.get(c));
+				var = createVarFromParameter(newScope, formalParameters.get(c));
 				realVar = evalue(newScope,realParameters.get(c));
 				// Se os tipos forem incompatíveis, e o tipo da variável real já tiver sido determinado
 				// * lembrando que os tipos formais já são estabelecidos préviamente
@@ -233,6 +237,13 @@ public class ExpressionEvaluator {
 				var.setValue(realVar.getValue());
 				newScope.insert(var);
 			}
+			
+			// Quando o meliante sobre-escrever o nome da função
+			if (funcao.getType()!=VarType.FUNCTION_TYPE) {
+				Error r = new Error(24);
+				r.setExtra(funCall.getFirstLexem().getLexem().getLex() + ". If you are trying to use a variable with this name in function's scope, rename it.");
+				throw r;
+			}
 			SintaxElement funExp = (SintaxElement) funcao.getValue();
 			return evalue(newScope,funExp);
 			// TODO testar
@@ -243,10 +254,18 @@ public class ExpressionEvaluator {
 		}
 	}
 	
-	private static Variable createVarFromParameter(SintaxElement sintaxElement) {
+	private static Variable createVarFromParameter(Table scope, SintaxElement sintaxElement) {
 		// Criar a variável a partir de um parametro formal
 		// formato <ID> : <TIPO>, onde cada um desses é um sintaxElement, e tem o lexema correspondente
-		Variable v = new Variable(sintaxElement.getLexems().get(0).getLexem().getLex());
+		Variable v;
+		String varName = sintaxElement.getLexems().get(0).getLexem().getLex();
+		try { // Se já existir, sobre-escreve essa budega
+			v = scope.getElement(varName);
+			//System.out.println("peguei a var;");
+		} catch (Error e) {
+			v = new Variable(varName);
+		}
+		//System.out.println(sintaxElement.getLexems());
 		Lexem type = sintaxElement.getLexems().get(2).getLexem();
 		VarType t = VarType.UNKNOWN;
 		switch (type.getId()) {
@@ -258,6 +277,7 @@ public class ExpressionEvaluator {
 			case TYPE_LIST: t = VarType.LIST_TYPE; break;
 		}
 		v.setType(t);
+		v.setValue(null);
 		return v;
 	}
 
@@ -382,6 +402,7 @@ public class ExpressionEvaluator {
 					l.remove(a);
 				}
 			}
+			System.out.println(l);
 		}
 		return l;
 	}

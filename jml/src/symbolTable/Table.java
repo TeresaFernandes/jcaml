@@ -22,7 +22,17 @@ public class Table {
 	}
 	
 	public void insert(Variable v) {
-		table.add(v);
+		if (v.getName()!="") {
+			try {
+				Variable x = getElement(v.getName());
+				x.setType(v.getType());
+				x.setValue(v.getValue());
+				x.setAux(v.getAux());
+				//System.out.println("Sobrescrito "+x.getName());
+			} catch (Error e) { // Se falhar, é pq não existe
+				table.add(v);	
+			}
+		}
 	}
 	
 	/**

@@ -53,6 +53,8 @@ public class Error extends Exception {
 			case 20: message = "Invalid use of operator"; break;
 			case 21: message = "Expected primary expression"; break;
 			case 22: message = "Unexpected operator"; break;
+			case 23: message = "Variable "; break;
+			case 24: message = "Function "; break;
 				//...
 			default: message = "Unknown error";
 		}
