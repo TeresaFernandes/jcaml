@@ -235,8 +235,8 @@ public class Calculator {
 			case INT_VALUE: return VarType.INT_TYPE;
 			case LIST: return VarType.LIST_TYPE;
 			case STRING_VALUE: return VarType.STRING_TYPE;
+			default: return VarType.FUNCTION_TYPE;
 		}
-		return null;
 	}
 
 

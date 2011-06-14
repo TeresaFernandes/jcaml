@@ -13,3 +13,6 @@ length("teresa");
 
 let j = [2,6,4]; 
 let oi = [[2,2], [2], [2,52,0]];
+
+let k = x;
+let coisa = z;

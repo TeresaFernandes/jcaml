@@ -167,18 +167,18 @@ public class ExpressionEvaluator {
 							Variable vr = evalue(scope,operandos.get(a));
 							//System.out.println(vr);
 							if (vr.getType()==VarType.FUNCTION_TYPE) {
-								Error error = new Error(23);
-								error.setExtra(" " +vr.getName() + " is a function. Are you trying to override " + vr.getName() + "?");
-								throw error;
+								r = vr;
 							}
-							//JOptionPane.showMessageDialog(null, scope.getElement("xs"));
-							String str = (String) vr.getValue();
-							Lexem lex = new Lexem(str);
-							lex.evalue();
-							fse = new SintaxElement(lex);
-							// Checar
-							if (fse.getId()!=SintaxElementId.CONST) {
-								System.out.println("Erro, tipo do elemento é " + fse.getId());
+							else {
+								//JOptionPane.showMessageDialog(null, scope.getElement("xs"));
+								String str = (String) vr.getValue();
+								Lexem lex = new Lexem(str);
+								lex.evalue();
+								fse = new SintaxElement(lex);
+								// Checar
+								if (fse.getId()!=SintaxElementId.CONST) {
+									System.out.println("Erro, tipo do elemento é " + fse.getId());
+								}
 							}
 						}
 						// Se for operador ele só faz jogar aqui dentro
