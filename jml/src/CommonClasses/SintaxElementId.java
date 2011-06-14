@@ -1,6 +1,11 @@
 package CommonClasses;
 
 public enum SintaxElementId {
+	CHAVE_OPEN,
+    CHAVE_CLOSE,
+    KEYWORD_TYPE,
+    DEF_TYPE,
+    TYPE_CAMPOS,
 	OP,
 	CONST,
 	TIPO,

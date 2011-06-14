@@ -9,7 +9,6 @@ import CommonClasses.LexemId;
 import CommonClasses.SintaxElement;
 import CommonClasses.SintaxElementId;
 import CommonClasses.Error;
-import java.io.IOException;
 
 public class SintaxAnalyzer {
 
@@ -80,7 +79,10 @@ public class SintaxAnalyzer {
                  || reconhece_if()
                  || reconhece_match()
                  || reconhece_match_line()
-                 || reconhece_match_var();
+                 || reconhece_match_var()
+                 || reconhece_type_id()
+                 || reconhece_type()
+                 || reconhece_type_campo();
            
         }
 
@@ -116,7 +118,8 @@ public class SintaxAnalyzer {
 
 		if(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.CHAMADA_FUNCAO
                                       ||stack.get(stack.size()-2).getId()==SintaxElementId.E
-                                      ||stack.get(stack.size()-2).getId()==SintaxElementId.DEFINICAO_GLOBAL)
+                                      ||stack.get(stack.size()-2).getId()==SintaxElementId.DEFINICAO_GLOBAL
+                                      ||stack.get(stack.size()-2).getId()==SintaxElementId.DEF_TYPE)
                                   && stack.get(stack.size()-1).getId()==SintaxElementId.SEMICOLON){
 
                     /*como ele s� reconhece quando o ponto e virgula j� est� na pilha,
@@ -234,25 +237,52 @@ public class SintaxAnalyzer {
 
 	private static boolean reconhece_par_formais(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
+                //mais de um parametro formal
+                if(stack.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR){
 
-        if(stack.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR){
+                    //o pr�ximo elemento da lista tem que ser ou um ")" ou ","
+                    if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE)){return false;}//achu q pode tirar
 
-            if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE)){return false;}
-
-            laux.add(0,stack.pop());
-
-        while (stack.size()>1 && stack.get(stack.size()-1).getId()==SintaxElementId.COMMA
-                                && stack.get(stack.size()-2).getId()==SintaxElementId.PAR){
-
-            laux.add(0,stack.pop());
-            laux.add(0,stack.pop());
-        }
+                    laux.add(0,stack.pop());
 
 
-            stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
-            return true;
-        }
-        return false;
+
+                while (stack.size()>1 && stack.get(stack.size()-1).getId()==SintaxElementId.COMMA
+                                        && stack.get(stack.size()-2).getId()==SintaxElementId.PAR){
+
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                }
+
+
+                    stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
+                    return true;
+                }
+
+                //mais de um parametro formal
+                /*if(stack.size()>2 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR_FORMAIS
+                                  && stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
+                                  && stack.get(stack.size()-3).getId()==SintaxElementId.PAR){
+
+                    //o pr�ximo elemento da lista tem que ser ou um ")" ou ","
+                    if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE||list.get(0).getId()==LexemId.COMMA)){return false;}//achu q pode tirar
+
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                    stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
+                    return true;
+		}
+
+                //um unico parametro formal
+		if(stack.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR
+                        && list.size()>0 && list.get(0).getId()==LexemId.BRACKET_CLOSE){
+
+			laux.add(0,stack.pop());
+			stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
+			return true;
+		}*/
+		return false;
 	}
 
 	private static boolean reconhece_par(){
@@ -295,6 +325,7 @@ public class SintaxAnalyzer {
                      /*situa��es em que o <id>, <chamada_fun> ou <const> n�o deve ser "traduzidos" como um <exp_simples>:
                     quando a express�o vem antes de um "(" , "," , "LET" , "|" , "WITH" , ") ->" ou o pr�ximo elemento seja um "(" */
                     if(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.BRACKET_OPEN
+                                        || stack.get(stack.size()-2).getId()==SintaxElementId.CHAVE_OPEN
 					|| stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_LET
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
@@ -306,6 +337,7 @@ public class SintaxAnalyzer {
                      /* outras situa��es em que o <id>, <chamada_fun> ou <const> n�o deve ser "traduzidos" como um <exp_simples>:
                        quando o proximo elemento na lista eh: "(" , ")" , "as" , "OP" ou "=" */
                     if (list.size()>0 && (list.get(0).getId()==LexemId.BRACKET_OPEN
+                                            || stack.get(stack.size()-2).getId()==SintaxElementId.CHAVE_OPEN
                                            // ||list.get(0).getId()==LexemId.BRACKET_CLOSE
                                             ||list.get(0).getId()==LexemId.KEYWORD_AS
                                             || new SintaxElement(list.get(0)).getId()==SintaxElementId.OP
@@ -526,4 +558,73 @@ public class SintaxAnalyzer {
 		}
             return false;
 	}
+
+
+        private static boolean reconhece_type_id(){
+            List<SintaxElement> laux=new LinkedList<SintaxElement>();
+
+            if (list.size()>2 && new SintaxElement(list.get(0)).getId()==SintaxElementId.ID
+                              && list.get(1).getId()==LexemId.ACESS_DOT
+                              && new SintaxElement(list.get(2)).getId()==SintaxElementId.ID ){
+
+                laux.add(0,new SintaxElement(list.remove(0)));
+                laux.add(0,new SintaxElement(list.remove(0)));
+                laux.add(0,new SintaxElement(list.remove(0)));
+
+                while(list.size()>1 && list.get(0).getId()==LexemId.ACESS_DOT
+                                    && new SintaxElement(list.get(1)).getId()==SintaxElementId.ID){
+
+                    laux.add(0,new SintaxElement(list.remove(0)));
+                    laux.add(0,new SintaxElement(list.remove(0)));
+                }
+
+                stack.push(new SintaxElement(SintaxElementId.ID, laux));
+                return true;
+            }
+            
+            return false;
+        }
+
+        private static boolean reconhece_type(){
+
+            List<SintaxElement> laux=new LinkedList<SintaxElement>();
+            if (stack.size()>5 && stack.get(stack.size()-1).getId()==SintaxElementId.CHAVE_CLOSE
+                               && stack.get(stack.size()-2).getId()==SintaxElementId.TYPE_CAMPOS
+                               && stack.get(stack.size()-3).getId()==SintaxElementId.CHAVE_OPEN
+                               && stack.get(stack.size()-4).getId()==SintaxElementId.ASSIGNMENT
+                               && stack.get(stack.size()-5).getId()==SintaxElementId.ID
+                               && stack.get(stack.size()-6).getId()==SintaxElementId.KEYWORD_TYPE   ){
+
+                laux.add(0,stack.pop());
+                laux.add(0,stack.pop());
+                laux.add(0,stack.pop());
+                laux.add(0,stack.pop());
+                laux.add(0,stack.pop());
+                laux.add(0,stack.pop());
+
+                stack.push(new SintaxElement(SintaxElementId.DEF_TYPE, laux));
+                return true;
+            }
+            return false;
+        }
+
+        private static boolean reconhece_type_campo(){
+
+            List<SintaxElement> laux=new LinkedList<SintaxElement>();
+            if (stack.size()>0 && stack.peek().getId()==SintaxElementId.PAR
+                               && list.size()>0 && list.get(0).getId()==LexemId.CHAVE_CLOSE){
+
+                laux.add(0,stack.pop());
+                while (stack.size()>1 && stack.get(stack.size()-1).getId()==SintaxElementId.COMMA
+                                      && stack.get(stack.size()-2).getId()==SintaxElementId.PAR ){
+                    
+                    laux.add(0,stack.pop());
+                    laux.add(0,stack.pop());
+                }
+
+                stack.push(new SintaxElement(SintaxElementId.TYPE_CAMPOS, laux));
+                return true;
+            }
+            return false;
+        }
 }

@@ -27,6 +27,7 @@ public class Lexem {
 		// Palavras reservadas
 		if (lex.compareToIgnoreCase("let")==0) { id = LexemId.KEYWORD_LET; return; }
 		else if (lex.compareToIgnoreCase("in")==0) { id = LexemId.KEYWORD_IN; return; }
+		else if (lex.compareToIgnoreCase("type")==0) { id = LexemId.KEYWORD_TYPE; return; }
 		else if (lex.compareToIgnoreCase("if")==0) { id = LexemId.KEYWORD_IF; return; }
 		else if (lex.compareToIgnoreCase("then")==0) { id = LexemId.KEYWORD_THEN; return; }
 		else if (lex.compareToIgnoreCase("else")==0) { id = LexemId.KEYWORD_ELSE; return; }
@@ -46,6 +47,8 @@ public class Lexem {
 		else if (lex.compareToIgnoreCase("list")==0) { id = LexemId.TYPE_LIST; return; }
 		// Marcação
 		else if (lex.compareTo("|")==0) { id = LexemId.KEYWORD_MATCHBAR; return; }
+		else if (lex.compareTo("{")==0) { id = LexemId.CHAVE_OPEN; return; }
+        else if (lex.compareTo("}")==0) { id = LexemId.CHAVE_CLOSE; return; }
 		else if (lex.compareTo("_")==0) { id = LexemId.KEYWORD_JOKER; return; }
 		else if (lex.compareTo(":")==0) { id = LexemId.COLON; return; }
 		else if (lex.compareTo(";")==0) { id = LexemId.SEMICOLON; return; }

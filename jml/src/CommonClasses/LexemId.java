@@ -1,6 +1,10 @@
 package CommonClasses;
 
 public enum LexemId {
+	
+	KEYWORD_TYPE,
+    CHAVE_OPEN,
+    CHAVE_CLOSE,
 	NAME,
 	TYPE_INT,
 	TYPE_CHAR,

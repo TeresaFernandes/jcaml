@@ -72,6 +72,9 @@ public class SintaxElement {
 		case BRACKET_OPEN: this.id = SintaxElementId.BRACKET_OPEN; break;
 		case BRACKET_CLOSE: this.id = SintaxElementId.BRACKET_CLOSE; break;
 		case END_LINE: this.id = SintaxElementId.END_LINE; break;
+		case CHAVE_OPEN: this.id = SintaxElementId.CHAVE_OPEN; break;
+	    case CHAVE_CLOSE: this.id = SintaxElementId.CHAVE_CLOSE; break;
+	    case KEYWORD_TYPE: this.id = SintaxElementId.KEYWORD_TYPE; break;
 		}
 	}
 	
