@@ -1,4 +1,7 @@
 
-//let x = function (xis:int) -> xis+2;
-let x = 3;
-let z = if x==3 then 5 else 0;
+let x = function (xis:int, y:int) -> xis+y;
+
+let z = 5 in
+	x(3)==z;
+
+x(3,2);

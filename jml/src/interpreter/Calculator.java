@@ -127,7 +127,7 @@ public class Calculator {
 						break;
 
 					case OPERATOR_EQUAL:
-						v.setValue(String.valueOf(((String)v1.getValue()).compareTo((String)v2.getValue())==0));
+						v.setValue(String.valueOf(0==((String)v1.getValue()).compareTo((String)v2.getValue())));
 						break;
 					case OPERATOR_NONEQUAL: // Fazer depois TODO 
 						v.setValue(String.valueOf(((String)v1.getValue()).compareTo((String)v2.getValue())!=0));

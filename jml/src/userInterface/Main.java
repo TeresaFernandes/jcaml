@@ -41,7 +41,7 @@ public class Main {
 			SintaxElement se = SintaxAnalyzer.parseLexems(l);
 			if (se!=null){
 			Table t = Analyzer.s;
-			System.out.println(ExpressionEvaluator.evalue(t,se));
+			ExpressionEvaluator.evalue(t,se);
 			
 			
 			}

@@ -37,6 +37,7 @@ public class ExpressionEvaluator {
 				case PROGRAMA:
 					for (int a=0;a<current.getLexems().size();a++) {
 						r = evalue(scope,current.getLexems().get(a));
+						if (r!=null) System.out.println(r);
 					}
 					return r;
 			
@@ -52,9 +53,9 @@ public class ExpressionEvaluator {
 				
 				case DEF_FUNCAO: // Cria uma variável do tipo função
 					Variable v = new Variable("");
-					v.setType(VarType.FUNCTION_TYPE);
 					v.setAux(getFormalParameters(current));
 					v.setValue(current.getLexems().get(5));
+					v.setType(VarType.FUNCTION_TYPE); // Tem que arrumar o tipo depois pra n dar pau
 					return v;
 					
 				case DEFINICAO_GLOBAL:
@@ -121,10 +122,11 @@ public class ExpressionEvaluator {
 						throw error;
 					}
 					// Se o valor de value for true executa o E da posição 3, senão o 5
+					Boolean branchControl = ((String) value.getValue()).compareTo("true")==0;
 					return evalue(
 							scope,
 							current.getLexems().get(
-									(Boolean.getBoolean((String) value.getValue())? 5 : 3)
+									(branchControl==true? 3 : 5)
 								)
 							);
 					
@@ -140,7 +142,7 @@ public class ExpressionEvaluator {
 					
 				case EXP:
 					// TODO FAZER ISSO URGENTE
-					System.out.println("Pobrema aki");
+					//System.out.println("Pobrema aki");
 					// Continua para pegar a conjunto de instruções abaixo, faz a mesma coisa
 				case EXP_SIMPLES:
 					// TODO
@@ -154,6 +156,8 @@ public class ExpressionEvaluator {
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
 						// Se não for operador e nem consta, transformar para CONST
+						
+						// Se for função fazer diferente
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
 							//System.out.println(operandos.get(a));							
 							Variable vr = evalue(scope,operandos.get(a));
@@ -376,11 +380,9 @@ public class ExpressionEvaluator {
 			for (int a=0;a<l.size();a++) {
 				if (l.get(a).getId()==SintaxElementId.COMMA) {
 					l.remove(a);
-					a--;
 				}
 			}
 		}
-
 		return l;
 	}
 	
