@@ -235,30 +235,24 @@ public class SintaxAnalyzer {
 	private static boolean reconhece_par_formais(){
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 
-                //mais de um parametro formal
-                if(stack.size()>2 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR_FORMAIS
-                                  && stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
-                                  && stack.get(stack.size()-3).getId()==SintaxElementId.PAR){
+        if(stack.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR){
 
-                    //o pr�ximo elemento da lista tem que ser ou um ")" ou ","
-                    if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE||list.get(0).getId()==LexemId.COMMA)){return false;}//achu q pode tirar
+            if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE)){return false;}
 
-                    laux.add(0,stack.pop());
-                    laux.add(0,stack.pop());
-                    laux.add(0,stack.pop());
-                    stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
-                    return true;
-		}
+            laux.add(0,stack.pop());
 
-                //um unico parametro formal
-		if(stack.size()>0 && stack.get(stack.size()-1).getId()==SintaxElementId.PAR
-                        && list.size()>0 && list.get(0).getId()==LexemId.BRACKET_CLOSE){
+        while (stack.size()>1 && stack.get(stack.size()-1).getId()==SintaxElementId.COMMA
+                                && stack.get(stack.size()-2).getId()==SintaxElementId.PAR){
 
-			laux.add(0,stack.pop());
-			stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
-			return true;
-		}
-		return false;
+            laux.add(0,stack.pop());
+            laux.add(0,stack.pop());
+        }
+
+
+            stack.push(new SintaxElement(SintaxElementId.PAR_FORMAIS, laux));
+            return true;
+        }
+        return false;
 	}
 
 	private static boolean reconhece_par(){
