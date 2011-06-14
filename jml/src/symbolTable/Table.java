@@ -16,7 +16,6 @@ public class Table {
 		v1 = new Variable("ceil"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("floor"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("sqrt"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
-		
 		v1 = new Variable("length"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 	}
 	

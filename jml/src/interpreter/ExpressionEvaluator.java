@@ -366,35 +366,33 @@ public class ExpressionEvaluator {
 			}
 			return v;
 		}
-		else if (name.compareToIgnoreCase("get")==0) {}
-		else if (name.compareToIgnoreCase("uppercase")==0) {}
-		else if (name.compareToIgnoreCase("lowercase")==0) {}
 		
-		else if (name.compareToIgnoreCase("int_of_char")==0) {}
-		else if (name.compareToIgnoreCase("int_of_string")==0) {}
-		else if (name.compareToIgnoreCase("int_of_float")==0) {}
-		else if (name.compareToIgnoreCase("int_of_char")==0) {}
+		else if (name.compareToIgnoreCase("get")==0) {} // TODO
+		else if (name.compareToIgnoreCase("uppercase")==0) {}// TODO
+		else if (name.compareToIgnoreCase("lowercase")==0) {}// TODO
 		
-		else if (name.compareToIgnoreCase("char_of_int")==0) {}
+		else if (name.compareToIgnoreCase("int_of_char")==0) {}// TODO
+		else if (name.compareToIgnoreCase("int_of_string")==0) {}// TODO
+		else if (name.compareToIgnoreCase("int_of_float")==0) {}// TODO
+		else if (name.compareToIgnoreCase("int_of_char")==0) {}// TODO
 		
-		else if (name.compareToIgnoreCase("float_of_string")==0) {}
-		else if (name.compareToIgnoreCase("float_of_int")==0) {}
+		else if (name.compareToIgnoreCase("char_of_int")==0) {}// TODO
 		
-		else if (name.compareToIgnoreCase("string_of_bool")==0) {}
-		else if (name.compareToIgnoreCase("string_of_char")==0) {}
-		else if (name.compareToIgnoreCase("string_of_int")==0) {}
-		else if (name.compareToIgnoreCase("string_of_float")==0) {}
-		else if (name.compareToIgnoreCase("string_of_list")==0) {}
+		else if (name.compareToIgnoreCase("float_of_string")==0) {}// TODO
+		else if (name.compareToIgnoreCase("float_of_int")==0) {}// TODO
+		
+		else if (name.compareToIgnoreCase("string_of_bool")==0) {}// TODO
+		else if (name.compareToIgnoreCase("string_of_char")==0) {}// TODO
+		else if (name.compareToIgnoreCase("string_of_int")==0) {}// TODO
+		else if (name.compareToIgnoreCase("string_of_float")==0) {}// TODO
+		else if (name.compareToIgnoreCase("string_of_list")==0) {}// TODO
 
-		else if (name.compareToIgnoreCase("read_int")==0) {}
-		else if (name.compareToIgnoreCase("read_float")==0) {}
-		else if (name.compareToIgnoreCase("read_string")==0) {}
-		else if (name.compareToIgnoreCase("read_char")==0) {}
+		else if (name.compareToIgnoreCase("read_int")==0) {}// TODO
+		else if (name.compareToIgnoreCase("read_float")==0) {}// TODO
+		else if (name.compareToIgnoreCase("read_string")==0) {}// TODO
+		else if (name.compareToIgnoreCase("read_char")==0) {}// TODO
 		
-		else if (name.compareToIgnoreCase("print_int")==0) {}
-		else if (name.compareToIgnoreCase("print_float")==0) {}
-		else if (name.compareToIgnoreCase("print_string")==0) {}
-		else if (name.compareToIgnoreCase("print_char")==0) {}
+		else if (name.compareToIgnoreCase("print")==0) {}// TODO
 		
 		// TODO
 		return null;

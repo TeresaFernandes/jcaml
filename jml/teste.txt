@@ -3,9 +3,10 @@ let fib = function (xs:int) -> if xs<=1 then 1 else fib(xs-1) + fib(xs-2);
 
 fib(6);
 
-//let x = ~- 2;
+let x = function (x:int) -> x*2;
+
 let z = !true;
 let h = ~-. 16.8;
-sqrt(abs(ceil(h)));
-
+abs(ceil(h));
+x(2);
 length("teresa");
