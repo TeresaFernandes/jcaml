@@ -3,6 +3,8 @@ package interpreter;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import CommonClasses.*;
 import CommonClasses.Error;
 import symbolTable.Table;
@@ -121,6 +123,7 @@ public class ExpressionEvaluator {
 						error.setLine(current.getLexems().get(0).getLexem().getLine());
 						throw error;
 					}
+					//JOptionPane.showMessageDialog(null, value);
 					// Se o valor de value for true executa o E da posição 3, senão o 5
 					Boolean branchControl = ((String) value.getValue()).compareTo("true")==0;
 					return evalue(
@@ -141,11 +144,9 @@ public class ExpressionEvaluator {
 					break;
 					
 				case EXP:
-					// TODO FAZER ISSO URGENTE
 					//System.out.println("Pobrema aki");
 					// Continua para pegar a conjunto de instruções abaixo, faz a mesma coisa
 				case EXP_SIMPLES:
-					// TODO
 					// Verificar todos os tipos, eles têm de ser iguais
 					// Verificar enquanto opera, para ganhar tempo
 					// Os operadores também devem ser compatíveis
@@ -155,10 +156,14 @@ public class ExpressionEvaluator {
 					List<SintaxElement> operandosConst = new LinkedList<SintaxElement>();
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
-
+						
+						// Arrumar recursão (volta)
+						
 						// Se não for operador e nem consta, transformar para CONST
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
-							//System.out.println(operandos.get(a));							
+							//System.out.println(operandos.get(a));
+							//System.out.println("wwwwaaaa "+operandos.get(a));
+							//System.out.println(operandos.get(a));
 							Variable vr = evalue(scope,operandos.get(a));
 							//System.out.println(vr);
 							if (vr.getType()==VarType.FUNCTION_TYPE) {
@@ -166,6 +171,7 @@ public class ExpressionEvaluator {
 								error.setExtra(" " +vr.getName() + " is a function. Are you trying to override " + vr.getName() + "?");
 								throw error;
 							}
+							//JOptionPane.showMessageDialog(null, scope.getElement("xs"));
 							String str = (String) vr.getValue();
 							Lexem lex = new Lexem(str);
 							lex.evalue();
@@ -178,8 +184,6 @@ public class ExpressionEvaluator {
 						// Se for operador ele só faz jogar aqui dentro
 						operandosConst.add(fse);
 					}
-					
-					// Passando para o solve
 					r = Calculator.solve(operandosConst);
 					break;
 					
@@ -212,7 +216,7 @@ public class ExpressionEvaluator {
 					throw r;
 				}
 			}
-			
+
 			List<SintaxElement> formalParameters = funcao.getAux();
 			List<SintaxElement> realParameters = getRealParameters(funCall);
 			
@@ -234,7 +238,9 @@ public class ExpressionEvaluator {
 					r.setExtra(" expected " +var.getType() + " got " + realVar.getType());
 					throw r;
 				}
+				//System.out.println("D=" + realVar);
 				var.setValue(realVar.getValue());
+				//System.out.println("Var: "+var);				
 				newScope.insert(var);
 			}
 			
@@ -245,8 +251,8 @@ public class ExpressionEvaluator {
 				throw r;
 			}
 			SintaxElement funExp = (SintaxElement) funcao.getValue();
+			//System.out.println(funcao);
 			return evalue(newScope,funExp);
-			// TODO testar
 			
 		} catch (Error e) {
 			e.setLine(funlist.get(0).getLexem().getLine());
@@ -277,26 +283,89 @@ public class ExpressionEvaluator {
 			case TYPE_LIST: t = VarType.LIST_TYPE; break;
 		}
 		v.setType(t);
-		v.setValue(null);
+		//System.out.println(v.getValue());
+		//v.setValue(null);
 		return v;
 	}
 
 	private static Variable defaultFunctionCall(Table scope, List<SintaxElement> parameters, String name) throws Error {
 		if (name.compareToIgnoreCase("abs")==0) {
-			Variable v = evalue(scope,parameters.get(0));
-			if (v.getType()!=VarType.FLOAT_TYPE || v.getType()!=VarType.INT_TYPE) {
-				// TODO PAREI AKI
-				//Error r = new Error
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
 			}
-			float f = Float.parseFloat((String)v.getValue());
-			v.setValue(String.valueOf(Math.abs(f)));
+			
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE && v.getType()!=VarType.INT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType());
+				throw r;
+			}
+			String newv = "";
+			if (v.getType()==VarType.FLOAT_TYPE) {
+				float f = Math.abs(Float.parseFloat((String)v.getValue()));
+				newv = String.valueOf(f);
+			} else { // Integer
+				int i = Math.abs(Integer.parseInt((String)v.getValue()));
+				newv = String.valueOf(i);				
+			}
+			v.setValue(newv);
+			return v;
 		}
-		else if (name.compareToIgnoreCase("ceil")==0) {}
-		else if (name.compareToIgnoreCase("floor")==0) {}
-		else if (name.compareToIgnoreCase("sqrt")==0) {}
-		else if (name.compareToIgnoreCase("exp")==0) {}
 		
-		else if (name.compareToIgnoreCase("length")==0) {}
+		else if (name.compareToIgnoreCase("ceil")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				throw r;
+			} else {
+				float f = (float) Math.ceil(Float.parseFloat((String)v.getValue()));
+				v.setValue(String.valueOf(f));
+			}
+			return v;
+		}
+		
+		else if (name.compareToIgnoreCase("floor")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				throw r;
+			} else {
+				float f = (float) Math.floor(Float.parseFloat((String)v.getValue()));
+				v.setValue(String.valueOf(f));
+			}
+			return v;
+		}
+		else if (name.compareToIgnoreCase("sqrt")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.FLOAT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				throw r;
+			} else {
+				float f = (float) Math.sqrt(Float.parseFloat((String)v.getValue()));
+				v.setValue(String.valueOf(f));
+			}
+			return v;
+		}
+		//else if (name.compareToIgnoreCase("exp")==0) {}
+		
+		else if (name.compareToIgnoreCase("length")==0) {
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.STRING_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				throw r;
+			} else {
+				int l = ((String) v.getValue()).length();
+				v.setValue(String.valueOf(l-2)); // -2 pq tem que tirar as "
+				v.setType(VarType.INT_TYPE);
+			}
+			return v;
+		}
 		else if (name.compareToIgnoreCase("get")==0) {}
 		else if (name.compareToIgnoreCase("uppercase")==0) {}
 		else if (name.compareToIgnoreCase("lowercase")==0) {}
@@ -402,7 +471,7 @@ public class ExpressionEvaluator {
 					l.remove(a);
 				}
 			}
-			System.out.println(l);
+			//System.out.println(l);
 		}
 		return l;
 	}

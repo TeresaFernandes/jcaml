@@ -66,6 +66,7 @@ public class Analyzer {
 	 * @throws Error if exists any lexical invalid
 	 */
 	static private int getEndOfLexem(String s) throws Error {
+		if (s.startsWith("~-.")) return 2;
 		if (s.startsWith("::")
 			|| s.startsWith("~-")
 			|| s.startsWith("->")

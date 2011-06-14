@@ -57,6 +57,7 @@ public class Lexem {
 		else if (lex.compareTo(".")==0) { id = LexemId.ACESS_DOT; return; }		
 		// Operadores
 		else if (lex.compareTo("::")==0) { id = LexemId.OPERATOR_LISTAPPEND; return; }
+		else if (lex.compareTo("~-.")==0) { id = LexemId.OPERATOR_UNARYMINUS; return; }
 		else if (lex.compareTo("~-")==0) { id = LexemId.OPERATOR_UNARYMINUS; return; }
 		else if (lex.compareTo("@")==0) { id = LexemId.OPERATOR_LISTCONCAT; return; }
 		else if (lex.compareTo("+")==0) { id = LexemId.OPERATOR_SUM; return; }

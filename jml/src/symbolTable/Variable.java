@@ -55,4 +55,22 @@ public class Variable {
 	public String toString() {
 		return name+" ("+type+") value: "+value;
 	}
+	
+	public Variable clone() {
+		Variable v = new Variable(this.name);
+		v.setAux(this.aux); 
+		// Arrumar isso
+		v.setValue(this.value);
+		if (this.value!=null) {
+			if (this.value.getClass().toString().compareTo("class java.lang.String")==0) {
+				v.setValue("" + this.value);
+				//System.out.println("weee");
+			}
+			else {
+				// TODO clonar SintaxElement
+			}
+		}
+		v.setType(this.type);
+		return v;
+	}
 }

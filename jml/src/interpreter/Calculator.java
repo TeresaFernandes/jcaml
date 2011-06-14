@@ -44,7 +44,7 @@ public class Calculator {
 				else if (lex.getLex().compareTo("~-.")==0) { // Float
 					if (typeFromLex(second.getLexem())==VarType.FLOAT_TYPE) {
 						v = variableFromElement(second);
-						Float value = (Float) v.getValue();
+						Float value = Float.parseFloat((String)v.getValue());
 						v.setValue(value * -1);
 					}					
 					else {
@@ -57,7 +57,7 @@ public class Calculator {
 				else if (lex.getLex().compareTo("!")==0) { // Bool
 					if (typeFromLex(second.getLexem())==VarType.BOOL_TYPE) {
 						v = variableFromElement(second);
-						Boolean value = (Boolean) v.getValue();
+						Boolean value = Boolean.valueOf((String)v.getValue());
 						v.setValue(!value);
 					}
 					else {
@@ -68,16 +68,17 @@ public class Calculator {
 					}
 				}
 				// Removes os dois valores, e coloca o novo elemento
-				Lexem newLex = new Lexem((String) v.getValue());
+				Lexem newLex = new Lexem(String.valueOf(v.getValue()));
 				newLex.evalue();
 				SintaxElement newElement = new SintaxElement(newLex);
 				se.add(0, newElement);
+				continue;
 			}
 			// Operadores binários
 			else { // Tratar todas as outras operações aki
 				if (second.getId()!=SintaxElementId.OP) {
 					Error r = new Error(21);
-					r.setExtra(" after " + second.getLexem().getLex() +  "token");
+					r.setExtra(" after " + second.getLexem().getLex() +  " token");
 					r.setLine(second.getLexem().getLine());
 					throw r;
 				}
@@ -211,7 +212,7 @@ public class Calculator {
 	
 
 	private static SintaxElement elementFromVariable(Variable v) throws Error {
-		Lexem l = new Lexem((String)v.getValue());
+		Lexem l = new Lexem(String.valueOf(v.getValue()));
 		l.evalue();
 		SintaxElement s = new SintaxElement(l);
 		return s;

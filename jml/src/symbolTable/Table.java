@@ -10,6 +10,14 @@ public class Table {
 	
 	public Table() {
 		table = new LinkedList<Variable>();
+		
+		Variable v1;
+		v1 = new Variable("abs"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("ceil"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("floor"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("sqrt"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		
+		v1 = new Variable("length"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 	}
 	
 	/**
@@ -76,7 +84,7 @@ public class Table {
 		Table c = new Table();
 		Variable v;
 		for (int a=0; a<table.size(); a++) {
-			v = table.get(a);
+			v = table.get(a).clone();
 			c.insert(v);
 		}
 		
