@@ -25,6 +25,11 @@ public class Table {
 		v1 = new Variable("char_of_int"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("float_of_int"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("float_of_string"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("string_of_bool"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("string_of_char"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("string_of_int"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("string_of_float"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("string_of_list"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 	}
 	
 	/**
