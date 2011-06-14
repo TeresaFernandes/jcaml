@@ -1,5 +1,4 @@
 
-let pow = function (xis:int, y:int) -> if y==1  then x else x*pow(x,y-1);
+let fib = function (xs:int) -> if xs==0 then 1 else if xs==1 then 1 else fib(xs-1) + fib(xs-2);
 
-
-x(3,2);
+fib(3);
