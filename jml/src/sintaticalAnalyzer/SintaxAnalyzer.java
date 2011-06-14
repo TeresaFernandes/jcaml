@@ -9,6 +9,7 @@ import CommonClasses.LexemId;
 import CommonClasses.SintaxElement;
 import CommonClasses.SintaxElementId;
 import CommonClasses.Error;
+import java.io.IOException;
 
 public class SintaxAnalyzer {
 
@@ -22,9 +23,9 @@ public class SintaxAnalyzer {
 		if (stack==null)stack=new Stack<SintaxElement>();
 
                 /*enquanto tiver elemento na lista e ninguem reconhecer
-                algum lexema um novo elemento da lista é inserido na pilha.
-                Mas se algum elemento for reconhecido, os métodos de
-                reconhecimentos são executados novamente.*/
+                algum lexema um novo elemento da lista ï¿½ inserido na pilha.
+                Mas se algum elemento for reconhecido, os mï¿½todos de
+                reconhecimentos sao executados novamente.*/
 		while (!list.isEmpty()){
 
                     if(!reconheceALL()){
@@ -34,24 +35,24 @@ public class SintaxAnalyzer {
 
                 /*Quando acabar os elementos da lista, os que estam na pilha
                 ainda podem ser reconhecidos pelos metodos, pricipalemente pelo
-                reconhece_definição e reconhece_programa.*/
+                reconhece_definiï¿½ï¿½o e reconhece_programa.*/
 		while (reconheceALL()){}
                 
-                /*O programa só é reconhecido se tiver apenas um programa na pilha*/
+                /*O programa sao reconhecido se tiver apenas um programa na pilha*/
 		if (stack.size()==1 && list.size()==0){
 			System.out.print("Reconheceu");
 			return stack.pop();
 		}else{
-                        System.out.print("Não Reconheceu");
-                        lançaExceção();
+                        System.out.print("nao reconheceu");
+                        lancaExcecao();
 		}
 
 		return null;
 
 	}
 
-        private static void lançaExceção() throws Error{
-            List<SintaxElement> l =stack.peek().getLexems();
+        private static void lancaExcecao() throws Error{
+            List<SintaxElement> l =stack.get(0).getLexems();
             while (l.get(0).getLexems()!=null){
                 l=l.get(0).getLexems();
             }
@@ -61,8 +62,9 @@ public class SintaxAnalyzer {
             throw e;
         }
 
-        /*Centraliza as chamadas de função ( questão de organização só)*/
-        private static boolean reconheceALL(){
+        /*Centraliza as chamadas de funï¿½ï¿½o ( questï¿½o de organizaï¿½ï¿½o sï¿½)*/
+        private static boolean reconheceALL() throws Error{
+
             return reconhece_programa()
                  || reconhece_definicao()
                  || reconhece_def_local()
@@ -79,12 +81,13 @@ public class SintaxAnalyzer {
                  || reconhece_match()
                  || reconhece_match_line()
                  || reconhece_match_var();
+           
         }
 
-        /*Os métodos de reconhecimento comparam os elementos de acordo com o padrão descrito na gramática.
-         * Basicamente, eles comparam os elementos que já estam na pilha e verificam se os que ainda estam
-         * na fila são os esperados para formar uma determinada definição. Então, os elementos são removidos
-         * e inseridos numa lista auxiliar com a marca/nome da definição que será reposta na pilha.
+        /*Os mï¿½todos de reconhecimento comparam os elementos de acordo com o padrï¿½o descrito na gramï¿½tica.
+         * Basicamente, eles comparam os elementos que jï¿½ estam na pilha e verificam se os que ainda estam
+         * na fila sï¿½o os esperados para formar uma determinada definiï¿½ï¿½o. Entï¿½o, os elementos sï¿½o removidos
+         * e inseridos numa lista auxiliar com a marca/nome da definiï¿½ï¿½o que serï¿½ reposta na pilha.
          */
 
 	private static boolean reconhece_programa(){
@@ -116,8 +119,8 @@ public class SintaxAnalyzer {
                                       ||stack.get(stack.size()-2).getId()==SintaxElementId.DEFINICAO_GLOBAL)
                                   && stack.get(stack.size()-1).getId()==SintaxElementId.SEMICOLON){
 
-                    /*como ele só reconhece quando o ponto e virgula já está na pilha,
-                    dai tem que remover e inserir a definição na mesma posição (entre os ponto e virgula)*/
+                    /*como ele sï¿½ reconhece quando o ponto e virgula jï¿½ estï¿½ na pilha,
+                    dai tem que remover e inserir a definiï¿½ï¿½o na mesma posiï¿½ï¿½o (entre os ponto e virgula)*/
                     laux.add(0,stack.remove(stack.size()-2));
                     stack.add(stack.size()-1,new SintaxElement(SintaxElementId.DEFINICAO, laux));
                     return true;
@@ -173,9 +176,9 @@ public class SintaxAnalyzer {
                                         || stack.peek().getId() == SintaxElementId.EXP
                                         ||stack.peek().getId() == SintaxElementId.DEFINICAO_LOCAL)){
 
-                    /*situações em que o <exp> não deve ser "traduzido" como um <e> :
-                    quando a expressão vier após a palavra "IF" ou "MATCH" ou após
-                    os marcadores ") ->" que fazem parte de uma definicao de uma função*/
+                    /*situaï¿½ï¿½es em que o <exp> nï¿½o deve ser "traduzido" como um <e> :
+                    quando a expressï¿½o vier apï¿½s a palavra "IF" ou "MATCH" ou apï¿½s
+                    os marcadores ") ->" que fazem parte de uma definicao de uma funï¿½ï¿½o*/
                    if(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_IF
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCH)){return false;}
 
@@ -237,7 +240,7 @@ public class SintaxAnalyzer {
                                   && stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
                                   && stack.get(stack.size()-3).getId()==SintaxElementId.PAR){
 
-                    //o próximo elemento da lista tem que ser ou um ")" ou ","
+                    //o prï¿½ximo elemento da lista tem que ser ou um ")" ou ","
                     if(list.size()>0 && !(list.get(0).getId()==LexemId.BRACKET_CLOSE||list.get(0).getId()==LexemId.COMMA)){return false;}//achu q pode tirar
 
                     laux.add(0,stack.pop());
@@ -279,6 +282,8 @@ public class SintaxAnalyzer {
                                         || stack.peek().getId()==SintaxElementId.MATCH
                                         || stack.peek().getId()==SintaxElementId.IF)){
                     
+                    if (list.size()>0 && (list.get(0).getId()==LexemId.COMMA || list.get(0).getId()==LexemId.BRACKET_CLOSE)) {return false;}
+
                     laux.add(0,stack.pop());
                     stack.push(new SintaxElement(SintaxElementId.EXP, laux));
                     return true;
@@ -293,21 +298,21 @@ public class SintaxAnalyzer {
                                     || stack.peek().getId()==SintaxElementId.CHAMADA_FUNCAO
                                     || stack.peek().getId()==SintaxElementId.CONST)){
 
-                     /*situações em que o <id>, <chamada_fun> ou <const> não deve ser "traduzidos" como um <exp_simples>:
-                    quando a expressão vem antes de um "(" , "," , "LET" , "|" , "WITH" , ") ->" ou o próximo elemento seja um "(" */
+                     /*situaï¿½ï¿½es em que o <id>, <chamada_fun> ou <const> nï¿½o deve ser "traduzidos" como um <exp_simples>:
+                    quando a expressï¿½o vem antes de um "(" , "," , "LET" , "|" , "WITH" , ") ->" ou o prï¿½ximo elemento seja um "(" */
                     if(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.BRACKET_OPEN
 					|| stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_LET
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_WITH)){return false;}
 
-                    if(stack.size()>2 && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE){return false;}
+                    //if(stack.size()>2 && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE){return false;}
 
-                     //se ainda tiver mais elementos de expressão na lista espere ate que eles sejam passados para a pilha
-                     /* outras situações em que o <id>, <chamada_fun> ou <const> não deve ser "traduzidos" como um <exp_simples>:
+                     //se ainda tiver mais elementos de expressï¿½o na lista espere ate que eles sejam passados para a pilha
+                     /* outras situaï¿½ï¿½es em que o <id>, <chamada_fun> ou <const> nï¿½o deve ser "traduzidos" como um <exp_simples>:
                        quando o proximo elemento na lista eh: "(" , ")" , "as" , "OP" ou "=" */
                     if (list.size()>0 && (list.get(0).getId()==LexemId.BRACKET_OPEN
-                                            ||list.get(0).getId()==LexemId.BRACKET_CLOSE
+                                           // ||list.get(0).getId()==LexemId.BRACKET_CLOSE
                                             ||list.get(0).getId()==LexemId.KEYWORD_AS
                                             || new SintaxElement(list.get(0)).getId()==SintaxElementId.OP
                                             || list.get(0).getId()==LexemId.ASSIGNMENT)){return false;}
@@ -321,13 +326,13 @@ public class SintaxAnalyzer {
                                               || stack.get(stack.size()-2).getId()==SintaxElementId.CONST
                                               || stack.get(stack.size()-2).getId()==SintaxElementId.CHAMADA_FUNCAO)){
 
-                          if (stack.get(stack.size()-1).getId()==SintaxElementId.ASSIGNMENT && stack.size()>2 && (stack.get(stack.size()-3).getId()==SintaxElementId.KEYWORD_LET)){break;} //testa se eh uma declaração
+                          if (stack.get(stack.size()-1).getId()==SintaxElementId.ASSIGNMENT && stack.size()>2 && (stack.get(stack.size()-3).getId()==SintaxElementId.KEYWORD_LET)){break;} //testa se eh uma declaraï¿½ï¿½o
                           
                           laux.add(0,stack.pop());
                           laux.add(0,stack.pop());
                       }
 
-                      if (stack.size()>0 && stack.peek().getId()==SintaxElementId.OP) laux.add(0,stack.pop()); //pedreiragem para deixar passar uma expressão que começa com um operador
+                      if (stack.size()>0 && stack.peek().getId()==SintaxElementId.OP) laux.add(0,stack.pop()); //pedreiragem para deixar passar uma expressï¿½o que comeï¿½a com um operador
                       
                       stack.push(new SintaxElement(SintaxElementId.EXP_SIMPLES, laux));
                       return true;
@@ -372,7 +377,8 @@ public class SintaxAnalyzer {
 
                 if(stack.size()>0 && (stack.peek().getId()==SintaxElementId.ID
                                         || stack.peek().getId()==SintaxElementId.CHAMADA_FUNCAO
-                                        || stack.peek().getId()==SintaxElementId.CONST)){
+                                        || stack.peek().getId()==SintaxElementId.CONST
+                                        || stack.peek().getId()==SintaxElementId.EXP_SIMPLES)){
                     
                     //se ainda tiver mais elementos parametro_real na lista espere ate que eles sejam passados para a pilha
                     if (list.size()>0 && (list.get(0).getId()==LexemId.COMMA
@@ -382,14 +388,17 @@ public class SintaxAnalyzer {
                     //tem que ter antes um "(" e depois um ")", ou ter depois um ","
                     if (!(stack.size()>1 && list.size()>0 && ((stack.get(stack.size()-2).getId()==SintaxElementId.BRACKET_OPEN && list.get(0).getId()==LexemId.BRACKET_CLOSE)
                                                             ||list.get(0).getId()==LexemId.COMMA
-                                                            ||list.get(0).getId()==LexemId.BRACKET_CLOSE))){return false;}
+                                                            ||list.get(0).getId()==LexemId.BRACKET_CLOSE ))){return false;}
 
+                    if (stack.size()>1 &&  stack.get(stack.size()-2).getId()==SintaxElementId.OP){return false;}///affff
+                    
                     laux.add(0,stack.pop());
 
                     while(stack.size()>1 && stack.get(stack.size()-1).getId()==SintaxElementId.COMMA
                                          && (stack.get(stack.size()-2).getId()==SintaxElementId.ID
                                               || stack.get(stack.size()-2).getId()==SintaxElementId.CONST
-                                              || stack.get(stack.size()-2).getId()==SintaxElementId.CHAMADA_FUNCAO)){
+                                              || stack.get(stack.size()-2).getId()==SintaxElementId.CHAMADA_FUNCAO
+                                              || stack.get(stack.size()-2).getId()==SintaxElementId.EXP_SIMPLES)){
 
                               laux.add(0,stack.pop());
                               laux.add(0,stack.pop());
@@ -514,8 +523,8 @@ public class SintaxAnalyzer {
                                         || stack.get(stack.size()-1).getId()==SintaxElementId.KEYWORD_JOKER)){
 
                     //para ser um match_var, ele deve ser precedido de "|" ou "WITH"
-                    if (stack.size()>1 && !(stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
-                                            || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_WITH)){return false;} //para certificar que se tiver mais de um match_var deve ser precedido de "with" ou |
+                    if (!(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
+                                            || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_WITH))){return false;} //para certificar que se tiver mais de um match_var deve ser precedido de "with" ou |
 
                     laux.add(0,stack.pop());
                     stack.push(new SintaxElement(SintaxElementId.MATCH_VAR, laux));

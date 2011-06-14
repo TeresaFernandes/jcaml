@@ -1,7 +1,5 @@
 
-let x = function (xis:int, y:int) -> xis+y;
+let pow = function (xis:int, y:int) -> if y==1  then x else x*pow(x,y-1);
 
-let z = 5 in
-	x(3)==z;
 
 x(3,2);
