@@ -41,10 +41,12 @@ public class SintaxAnalyzer {
 		if (stack.size()==1 && list.size()==0){
 			return stack.pop();
 		}else{
-                        lancaExcecao();
+            lancaExcecao();
 		}
-
-		return null;
+		
+		throw new Error(-1);
+		
+		//return null;
 
 	}
 
@@ -55,7 +57,7 @@ public class SintaxAnalyzer {
             }
             Error e = new Error(19);
             e.setLine(l.get(0).getLexem().getLine());
-            e.setExtra(". Proximo a \"" + l.get(0).getLexem().getLex()+"\"");
+            e.setExtra(". Before \"" + l.get(0).getLexem().getLex()+"\"");
             throw e;
         }
 

@@ -171,9 +171,15 @@ public class ExpressionEvaluator {
 							//verificar os tipos de todos os <e>
 							return evalue (scope,s.getLexems().get(i+2));
 						}
+						
+						
 					}
 					
-					break;
+					Error er = new Error(27);
+					er.setLine(current.getLexems().get(0).getLexem().getLine());
+					throw er;
+					
+					//break;
 					
 				case ID:
 					if (current.getLexems()!=null) {
