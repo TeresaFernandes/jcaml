@@ -131,10 +131,42 @@ public class ExpressionEvaluator {
 									(branchControl==true? 3 : 5)
 								)
 							);
+							
+				case MATCH: 					
+					//TODO processar o "as"
 					
-				case MATCH: 
-					//Variable match_v = evalue(scope,current.getLexems().get(1));
-					// TODO arrumar aqui depois, tem que verificar os tipos de todos os <e>
+					Variable match_v = evalue(scope,current.getLexems().get(1));//<exp> do match
+					SintaxElement s = current.getLexems().get(3);//match_line
+					Variable le_v;//match_var
+					
+					for (int i=0; i<s.getLexems().size();i=i+4){
+						
+						//se for um "_" não avalia. Jah retorna o resultado
+						if (s.getLexems().get(i).getLexems().get(0).getId()!=SintaxElementId.KEYWORD_JOKER){
+							le_v =evalue (scope,s.getLexems().get(i).getLexems().get(0));
+						}else{
+							//verificar se tem o "as"
+							if (s.getLexems().get(i).getLexems().size()>2){
+								Variable x = new Variable(s.getLexems().get(i).getLexems().get(2).getLexem().getLex());
+								x.setValue(match_v.getValue());
+								x.setType(match_v.getType());
+								x.setAux(match_v.getAux());
+								
+								Table t = scope.clone();
+								t.insert(x);
+								return evalue(t, s.getLexems().get(i+2));
+								
+							}else{
+								return evalue (scope,s.getLexems().get(i+2));
+							}
+						}
+													
+						if (le_v.getType()==match_v.getType() &&  le_v.getValue().equals(match_v.getValue())) {
+							//verificar os tipos de todos os <e>
+							return evalue (scope,s.getLexems().get(i+2));
+						}
+					}
+					
 					break;
 					
 				case ID:
