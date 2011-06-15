@@ -1,6 +1,46 @@
 let problema1 = function (x:int, y:int,c:int) -> 
 	x*x - y +c;
 	
-problema1(1,2,3);
+// FIM DO POBREMA 1
 
-let problema2_1 = function (x:int) ;
+let problema2_intervalo1 = function (x:int) -> 
+	if x>=0 then 
+		if x<=25 then true
+		else false
+	else false;
+	
+let problema2_intervalo2 = function (x:int) ->
+	if x>=26 then 
+		if x<=50 then true
+		else false
+	else false;
+	
+let problema2_intervalo3 = function (x:int) ->
+	if x>=51 then 
+		if x<=75 then true
+		else false
+	else false;
+	
+let problema2_intervalo4 = function (x:int) ->
+	if x>=76 then 
+		if x<=100 then true
+		else false
+	else false;
+	
+
+let checa_intervalo = function (l:list, valor:int) ->
+	if problema2_intervalo1(valor) then set(0,l,get(0,l)+1)
+	else 
+		if problema2_intervalo2(valor) then set(1,l,get(1,l)+1)
+		else
+			if problema2_intervalo3(valor) then set(2,l,get(2,l)+1)
+			else
+				set(3,l,get(3,l)+1);
+
+
+
+type rational_t = { numerador:int, denominador:int };
+
+let problema4_a = function (a:int,b:int) -> 
+	rational_t(a,b);
+	
