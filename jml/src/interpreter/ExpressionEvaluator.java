@@ -218,7 +218,7 @@ public class ExpressionEvaluator {
 
 			List<SintaxElement> formalParameters = funcao.getAux();
 			List<SintaxElement> realParameters = getRealParameters(funCall);
-			System.out.println("DEBUG" + formalParameters); // TODO aqui tá dando null
+			//System.out.println("DEBUG" + formalParameters); // TODO aqui tá dando null
 			//System.out.println("DEBUG" + realParameters);
 			
 			if (formalParameters.size()!=realParameters.size()) {
@@ -241,6 +241,7 @@ public class ExpressionEvaluator {
 				}
 				//System.out.println("D=" + realVar);
 				var.setValue(realVar.getValue());
+				var.setAux(realVar.getAux());
 				//System.out.println("Var: "+var);				
 				newScope.insert(var);
 			}

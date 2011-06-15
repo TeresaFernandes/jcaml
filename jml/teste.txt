@@ -15,8 +15,6 @@ let fib = function (xs:int) -> if xs<=1 then 1 else fib(xs-1) + fib(xs-2);
 //let oi = [[2,2], [2], [2,52,0]];
 
 //l/et k = x;
-let coisa = function (hmmm: fun) -> hmmm(0);
+let coisa = function (hmmm: fun) -> hmmm(0) + 1;
 
-//coisa(fib);
-
-fib(5);
+coisa(fib);
