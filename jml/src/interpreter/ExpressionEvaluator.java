@@ -168,7 +168,9 @@ public class ExpressionEvaluator {
 							if (vr.getType()==VarType.FUNCTION_TYPE) {
 								r = vr;
 							}
-							else {
+							else if (vr.getType()==VarType.LIST_TYPE) {
+								r = vr;
+							} else {
 								//JOptionPane.showMessageDialog(null, scope.getElement("xs"));
 								String str = (String) vr.getValue();
 								Lexem lex = new Lexem(str);
@@ -207,6 +209,8 @@ public class ExpressionEvaluator {
 			if (funcao.getType()==VarType.DEFAULTFUNCTION_TYPE) {
 				// Passar o escopo, os parametros reais e o nome da função
 				if (funCall.getLexems().get(2).getId()==SintaxElementId.PAR_REAIS) {
+					return defaultFunctionCall(scope.clone(), getRealParameters(funCall), funcao.getName());
+				} else if (funCall.getLexems().get(2).getId()==SintaxElementId.BRACKET_CLOSE) {
 					return defaultFunctionCall(scope.clone(), getRealParameters(funCall), funcao.getName());
 				}
 				else {
@@ -302,7 +306,7 @@ public class ExpressionEvaluator {
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE && v.getType()!=VarType.INT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType());
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType());
 				throw r;
 			}
 			String newv = "";
@@ -318,10 +322,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("ceil")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
 				throw r;
 			} else {
 				float f = (float) Math.ceil(Float.parseFloat((String)v.getValue()));
@@ -331,10 +340,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("floor")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
 				throw r;
 			} else {
 				float f = (float) Math.floor(Float.parseFloat((String)v.getValue()));
@@ -343,10 +357,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("sqrt")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
 				throw r;
 			} else {
 				float f = (float) Math.sqrt(Float.parseFloat((String)v.getValue()));
@@ -357,10 +376,15 @@ public class ExpressionEvaluator {
 		//else if (name.compareToIgnoreCase("exp")==0) {}
 		
 		else if (name.compareToIgnoreCase("length")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.STRING_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
 				throw r;
 			} else {
 				int l = ((String) v.getValue()).length();
@@ -370,13 +394,101 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		
-		else if (name.compareToIgnoreCase("get")==0) {} // TODO
+		else if (name.compareToIgnoreCase("set")==0) { 
+			if (parameters.size()!=3) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 3 got "+ parameters.size());
+				throw r;
+			}
+			Variable id = evalue(scope, parameters.get(0));
+			Variable list = evalue(scope, parameters.get(1));
+			Variable newValue = evalue(scope,parameters.get(2));
+			
+			// Fazer um get pra descobrir o tipo atual do elemento
+			if (id.getType()!=VarType.INT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+name + ". Got a " + list.getType() + ", expected " + VarType.INT_TYPE);
+				throw r;
+			} else if (list.getType()!=VarType.LIST_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+name + ". Got a " + list.getType() + ", expected " + VarType.LIST_TYPE);
+				throw r;
+			} else {
+				//System.out.println(id);
+				// DONE
+				int realId = Integer.parseInt(((String)id.getValue()));
+				List realList = (List)list.getValue();
+				Variable oldValue;
+				try {
+					Lexem realLexem;
+					try {
+						realLexem = (Lexem) realList.get(realId);
+					} catch(ClassCastException e) {
+						realLexem = new Lexem((String) realList.get(realId));
+					}
+					realLexem.evalue();
+					oldValue = evalue(scope,new SintaxElement(realLexem));
+					if (newValue.getType()==oldValue.getType()) {
+						Lexem newLex = new Lexem((String)newValue.getValue());
+						((List)list.getValue()).set(realId, newLex);
+						return list;
+					} else {
+						Error r = new Error(16);
+						r.setExtra(" in fuction "+name + ". Got a " + newValue.getType() + ", expected " + oldValue.getType());
+						throw r;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					Error r = new Error(25);
+					r.setExtra(". "+e.getMessage());
+					throw r;
+				}
+			}
+		}
+		else if (name.compareToIgnoreCase("get")==0) {
+			// Dois parametros, o primeiro será o elemento, o segundo a lista
+			if (parameters.size()!=2) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 2 got "+ parameters.size());
+				throw r;
+			}
+			
+			Variable id = evalue(scope, parameters.get(0));
+			Variable list = evalue(scope, parameters.get(1));
+			if (id.getType()!=VarType.INT_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+name + ". Got a " + list.getType() + ", expected " + VarType.INT_TYPE);
+				throw r;
+			} else if (list.getType()!=VarType.LIST_TYPE) {
+				Error r = new Error(16);
+				r.setExtra(" in fuction "+name + ". Got a " + list.getType() + ", expected " + VarType.LIST_TYPE);
+				throw r;
+			} else {
+				//System.out.println(id);
+				// DONE
+				int realId = Integer.parseInt(((String)id.getValue()));
+				List realList = (List)list.getValue();
+				try {
+					Lexem realLexem = (Lexem)realList.get(realId);
+					realLexem.evalue();
+					return evalue(scope,new SintaxElement(realLexem));
+				} catch (IndexOutOfBoundsException e) {
+					Error r = new Error(25);
+					r.setExtra(". "+e.getMessage());
+					throw r;
+				}
+			}
+		} 
 		
 		else if (name.compareToIgnoreCase("uppercase")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.STRING_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
 				throw r;
 			} else {
 				String l = ((String) v.getValue()).toUpperCase();
@@ -385,10 +497,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("lowercase")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.STRING_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
 				throw r;
 			} else {
 				String l = ((String) v.getValue()).toLowerCase();
@@ -398,10 +515,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("int_of_char")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.CHAR_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.CHAR_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.CHAR_TYPE);
 				throw r;
 			} else {
 				String s = ((String) v.getValue());
@@ -413,10 +535,15 @@ public class ExpressionEvaluator {
 			return v;	
 		}
 		else if (name.compareToIgnoreCase("int_of_string")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.STRING_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
 				throw r;
 			} else {
 				String s = ((String) v.getValue());
@@ -428,10 +555,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("int_of_float")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
 				throw r;
 			} else {
 				int l = (int) Float.parseFloat((String) v.getValue());
@@ -442,10 +574,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("char_of_int")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.INT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
 				throw r;
 			} else {
 				String l = "'"+Integer.parseInt((String) v.getValue()) +"'";
@@ -456,10 +593,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("float_of_string")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.STRING_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
 				throw r;
 			} else {
 				String s = ((String) v.getValue());
@@ -471,10 +613,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("float_of_int")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.INT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
 				throw r;
 			} else {
 				float l = (float) Integer.parseInt((String) v.getValue());
@@ -485,10 +632,15 @@ public class ExpressionEvaluator {
 		}
 		
 		else if (name.compareToIgnoreCase("string_of_bool")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.BOOL_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.BOOL_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.BOOL_TYPE);
 				throw r;
 			} else {
 				String s =((String) v.getValue());
@@ -499,10 +651,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("string_of_char")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.CHAR_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.CHAR_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.CHAR_TYPE);
 				throw r;
 			} else {
 				String s = ((String) v.getValue());
@@ -514,10 +671,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("string_of_int")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.INT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.INT_TYPE);
 				throw r;
 			} else {
 				String s = "\""+((String) v.getValue())+ "\"";
@@ -527,10 +689,15 @@ public class ExpressionEvaluator {
 			return v;
 		}
 		else if (name.compareToIgnoreCase("string_of_float")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.FLOAT_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.FLOAT_TYPE);
 				throw r;
 			} else {
 				String s = "\""+((String) v.getValue())+ "\"";
@@ -539,11 +706,16 @@ public class ExpressionEvaluator {
 			}
 			return v;
 		}
-		else if (name.compareToIgnoreCase("string_of_list")==0) {
+		else if (name.compareToIgnoreCase("string_of_list")==0) { // TODO
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
 			Variable v = evalue(scope,parameters.get(0));
 			if (v.getType()!=VarType.LIST_TYPE) {
 				Error r = new Error(16);
-				r.setExtra(" in fuction "+v.getName() + ". Got a " + v.getType() + ", expected " + VarType.LIST_TYPE);
+				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.LIST_TYPE);
 				throw r;
 			} else {
 				String s = "\""+((String) v.getValue())+ "\"";
@@ -553,10 +725,82 @@ public class ExpressionEvaluator {
 			return v;
 		}
 
-		else if (name.compareToIgnoreCase("read_int")==0) {}// TODO
-		else if (name.compareToIgnoreCase("read_float")==0) {}// TODO
-		else if (name.compareToIgnoreCase("read_string")==0) {}// TODO
-		else if (name.compareToIgnoreCase("read_char")==0) {}// TODO
+		else if (name.compareToIgnoreCase("read_int")==0) {
+			if (parameters.size()!=0) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 0 got "+ parameters.size());
+				throw r;
+			} else {
+				Variable v = new Variable("");
+				v.setType(VarType.INT_TYPE);
+				try {
+					v.setValue(String.valueOf(Integer.parseInt(JOptionPane.showInputDialog("READ_INT"))));
+					return v;
+				}catch (NumberFormatException e) {
+					Error r = new Error(100);
+					r.setExtra(" value, expected INT_TYPE");
+					throw r;
+				}
+			}
+		}
+		else if (name.compareToIgnoreCase("read_float")==0) {
+			if (parameters.size()!=0) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 0 got "+ parameters.size());
+				throw r;
+			} else {
+				Variable v = new Variable("");
+				v.setType(VarType.FLOAT_TYPE);
+				try {
+					v.setValue(String.valueOf(Float.parseFloat(JOptionPane.showInputDialog("READ_FLOAT"))));
+					return v;
+				}catch (NumberFormatException e) {
+					Error r = new Error(100);
+					r.setExtra(" value, expected FLOAT_TYPE");
+					throw r;
+				}
+			}
+		}
+		else if (name.compareToIgnoreCase("read_string")==0) {
+			if (parameters.size()!=0) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 0 got "+ parameters.size());
+				throw r;
+			} else {
+				Variable v = new Variable("");
+				v.setType(VarType.STRING_TYPE);
+				v.setValue(JOptionPane.showInputDialog("READ_FLOAT"));
+				return v;
+			}
+		}
+		else if (name.compareToIgnoreCase("read_char")==0) {
+			if (parameters.size()!=0) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 0 got "+ parameters.size());
+				throw r;
+			} else {
+				Variable v = new Variable("");
+				v.setType(VarType.CHAR_TYPE);
+				Lexem l = null;
+				try {
+					l = new Lexem("'" + JOptionPane.showInputDialog("READ_FLOAT") + "'");
+					l.evalue();
+				} catch (Error e) {
+					Error r = new Error(100);
+					r.setExtra(" value, expected CHAR_TYPE");
+					throw r;
+				}
+				if (l.getId()==LexemId.CHAR_VALUE) {
+					v.setValue("'" + JOptionPane.showInputDialog("READ_FLOAT") + "'");
+					return v;
+				}
+				else {
+					Error r = new Error(100);
+					r.setExtra(" value, expected CHAR_TYPE");
+					throw r;
+				}
+			}
+		}
 		
 		else if (name.compareToIgnoreCase("print")==0) {}// TODO
 		
