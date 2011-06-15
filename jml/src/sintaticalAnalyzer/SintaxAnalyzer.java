@@ -78,7 +78,7 @@ public class SintaxAnalyzer {
                  || reconhece_match()
                  || reconhece_match_line()
                  || reconhece_match_var()
-                 || reconhece_type_id()
+                 //|| reconhece_type_id()
                  || reconhece_type()
                  || reconhece_type_campo();
            
@@ -558,7 +558,7 @@ public class SintaxAnalyzer {
 	}
 
 
-        private static boolean reconhece_type_id(){
+        /*private static boolean reconhece_type_id(){
             List<SintaxElement> laux=new LinkedList<SintaxElement>();
 
             if (list.size()>2 && new SintaxElement(list.get(0)).getId()==SintaxElementId.ID
@@ -581,7 +581,7 @@ public class SintaxAnalyzer {
             }
             
             return false;
-        }
+        }*/
 
         private static boolean reconhece_type(){
 
