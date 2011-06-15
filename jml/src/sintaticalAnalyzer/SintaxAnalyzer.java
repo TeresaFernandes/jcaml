@@ -558,30 +558,30 @@ public class SintaxAnalyzer {
 	}
 
 
-        /*private static boolean reconhece_type_id(){
+        private static boolean reconhece_type_id(){
             List<SintaxElement> laux=new LinkedList<SintaxElement>();
 
             if (list.size()>2 && new SintaxElement(list.get(0)).getId()==SintaxElementId.ID
                               && list.get(1).getId()==LexemId.ACESS_DOT
                               && new SintaxElement(list.get(2)).getId()==SintaxElementId.ID ){
 
-                laux.add(0,new SintaxElement(list.remove(0)));
-                laux.add(0,new SintaxElement(list.remove(0)));
-                laux.add(0,new SintaxElement(list.remove(0)));
+                laux.add(new SintaxElement(list.remove(0)));
+                laux.add(new SintaxElement(list.remove(0)));
+                laux.add(new SintaxElement(list.remove(0)));
 
-                while(list.size()>1 && list.get(0).getId()==LexemId.ACESS_DOT
+               /* while(list.size()>1 && list.get(0).getId()==LexemId.ACESS_DOT
                                     && new SintaxElement(list.get(1)).getId()==SintaxElementId.ID){
 
                     laux.add(0,new SintaxElement(list.remove(0)));
                     laux.add(0,new SintaxElement(list.remove(0)));
-                }
+                }*/
 
                 stack.push(new SintaxElement(SintaxElementId.ID, laux));
                 return true;
             }
             
             return false;
-        }*/
+        }
 
         private static boolean reconhece_type(){
 

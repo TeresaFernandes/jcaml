@@ -132,8 +132,7 @@ public class ExpressionEvaluator {
 								)
 							);
 							
-				case MATCH: 					
-					//TODO processar o "as"
+				case MATCH: 			
 					
 					Variable match_v = evalue(scope,current.getLexems().get(1));//<exp> do match
 					SintaxElement s = current.getLexems().get(3);//match_line
