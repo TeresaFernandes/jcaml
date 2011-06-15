@@ -13,6 +13,7 @@ import CommonClasses.SintaxElement;
 
 import sintaticalAnalyzer.SintaxAnalyzer;
 import symbolTable.Table;
+import symbolTable.VarType;
 
 //import javax.swing.JOptionPane;
 
@@ -54,7 +55,7 @@ public class Main {
 		System.out.println("\n\tSymbol Table:");
 		Table s = Analyzer.s;
 		for (int a=0;a<s.table.size();a++) {
-			System.out.println(s.table.get(a));
+			if (s.table.get(a).getType()!=VarType.DEFAULTFUNCTION_TYPE) System.out.println(s.table.get(a));
 		}
 	}
 

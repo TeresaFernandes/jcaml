@@ -1,5 +1,6 @@
-type coisa = {oi:int, xau:int};
-let medo = coisa(2,2);
+let problema1 = function (x:int, y:int,c:int) -> 
+	x*x - y +c;
+	
+problema1(1,2,3);
 
-medo.xau + medo.oi + 3;
-let medo = coisa( medo.oi + medo.xau, 100);
+let problema2_1 = function (x:int) ;

@@ -37,6 +37,7 @@ public class Table {
 		v1 = new Variable("read_float"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("read_string"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("read_char"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("print"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 	}
 	
 	/**

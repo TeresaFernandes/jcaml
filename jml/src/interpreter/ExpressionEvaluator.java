@@ -881,9 +881,17 @@ public class ExpressionEvaluator {
 			}
 		}
 		
-		else if (name.compareToIgnoreCase("print")==0) {}// TODO
-		
-		// TODO
+		else if (name.compareToIgnoreCase("print")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
+			Variable v = evalue(scope,parameters.get(0));
+			JOptionPane.showMessageDialog(null, (String)v.getValue(), "Print", JOptionPane.INFORMATION_MESSAGE);
+			return v;
+		}
+	
 		return null;
 	}
 	
