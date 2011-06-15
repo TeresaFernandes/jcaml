@@ -12,6 +12,9 @@ public class Table {
 		table = new LinkedList<Variable>();
 		
 		Variable v1;
+		
+		v1 = new Variable("set"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
+		v1 = new Variable("get"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("abs"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("ceil"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("floor"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
@@ -42,7 +45,11 @@ public class Table {
 	 */
 	public void insertElement(String name) throws Error {
 		Variable v = new Variable(name);
-		table.add(v);
+		try {
+			getElement(name);
+		} catch (Error e){
+			table.add(v);
+		}
 	}
 	
 	public void insert(Variable v) {
