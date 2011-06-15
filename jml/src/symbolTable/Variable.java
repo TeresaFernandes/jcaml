@@ -7,7 +7,7 @@ public class Variable {
 	private String name;
 	private VarType type;
 	private List aux;
-	private int adress;
+	private String realType;
 	//private String value;
 	private Object value;
 	
@@ -36,12 +36,12 @@ public class Variable {
 		this.aux = aux;
 	}
 	
-	public int getAdress() {
-		return adress;
+	public String getRealType() {
+		return realType;
 	}
 	
-	public void setAdress(int adress) {
-		this.adress = adress;
+	public void setRealType(String r) {
+		this.realType = r;
 	}
 	
 	public Object getValue() {
