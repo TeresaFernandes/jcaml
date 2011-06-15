@@ -53,7 +53,7 @@ public class Variable {
 	}
 	
 	public String toString() {
-		return name+" ("+type+") value: "+value;
+		return name+" ("+ (realType!=null? realType: type) +") value: "+value;
 	}
 	
 	public Variable clone() {

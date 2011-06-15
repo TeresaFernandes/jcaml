@@ -52,11 +52,12 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		System.out.println("\n\tSymbol Table:");
+		/*System.out.println("\n\tSymbol Table:");
 		Table s = Analyzer.s;
 		for (int a=0;a<s.table.size();a++) {
-			if (s.table.get(a).getType()!=VarType.DEFAULTFUNCTION_TYPE) System.out.println(s.table.get(a));
-		}
+			VarType t = s.table.get(a).getType();
+			if (t!=VarType.USER_TYPE && t!=VarType.DEFAULTFUNCTION_TYPE) System.out.println(s.table.get(a));
+		}*/
 	}
 
 }

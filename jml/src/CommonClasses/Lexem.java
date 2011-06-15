@@ -45,6 +45,8 @@ public class Lexem {
 		else if (lex.compareToIgnoreCase("char")==0) { id = LexemId.TYPE_CHAR; return; }
 		else if (lex.compareToIgnoreCase("bool")==0) { id = LexemId.TYPE_BOOL; return; }
 		else if (lex.compareToIgnoreCase("list")==0) { id = LexemId.TYPE_LIST; return; }
+		else if (lex.compareToIgnoreCase("custom")==0) { id = LexemId.TYPE_CUSTOM; return; }
+		
 		// Marcação
 		else if (lex.compareTo("|")==0) { id = LexemId.KEYWORD_MATCHBAR; return; }
 		else if (lex.compareTo("{")==0) { id = LexemId.CHAVE_OPEN; return; }

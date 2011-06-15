@@ -19,6 +19,7 @@ public class SintaxElement {
 		case TYPE_STRING:
 		case TYPE_FLOAT:
 		case TYPE_BOOL:
+		case TYPE_CUSTOM:
 		case TYPE_LIST: this.id = SintaxElementId.TIPO; break;
 		
 		case ACESS_DOT: this.id = SintaxElementId.DOT; break;

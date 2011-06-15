@@ -70,6 +70,7 @@ public class ExpressionEvaluator {
 					var.setType(reference.getType());
 					var.setAux(reference.getAux());
 					var.setValue(reference.getValue());
+					var.setRealType(reference.getRealType());
 					return var;
 					
 				case DEF_TYPE: 
@@ -90,6 +91,7 @@ public class ExpressionEvaluator {
 					newVar.setType(reference.getType());
 					newVar.setAux(reference.getAux());
 					newVar.setValue(reference.getValue());
+					newVar.setRealType(reference.getRealType());
 					// Insere
 					newScope.insert(newVar);
 					// Chama recursivamente
@@ -171,8 +173,6 @@ public class ExpressionEvaluator {
 							//verificar os tipos de todos os <e>
 							return evalue (scope,s.getLexems().get(i+2));
 						}
-						
-						
 					}
 					
 					Error er = new Error(27);
@@ -373,6 +373,7 @@ public class ExpressionEvaluator {
 			case TYPE_FLOAT: t = VarType.FLOAT_TYPE; break;
 			case TYPE_LIST: t = VarType.LIST_TYPE; break;
 			case TYPE_FUNCTION: t = VarType.FUNCTION_TYPE; break;
+			case TYPE_CUSTOM: t = VarType.CUSTOM_TYPE; break;
 		}
 		v.setType(t);
 		//System.out.println(v.getValue());
