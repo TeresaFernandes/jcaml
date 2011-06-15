@@ -78,7 +78,7 @@ public class SintaxAnalyzer {
                  || reconhece_match()
                  || reconhece_match_line()
                  || reconhece_match_var()
-                 //|| reconhece_type_id()
+                 || reconhece_type_id()
                  || reconhece_type()
                  || reconhece_type_campo();
            

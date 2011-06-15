@@ -1,14 +1,5 @@
-let x = function (x:int) -> x+1;
-
-let coisa = function (m:fun) -> m(0);
-
-
-let x = [2,7,5,2];
-get(2,x);
-
 type coisa = {oi:int, xau:int};
-type dois = { oi:int , xau:string };
 let medo = coisa(2,2);
 
-oi.medo;
-
+medo.xau + medo.oi + 3;
+let medo = coisa( medo.oi + medo.xau, 100);

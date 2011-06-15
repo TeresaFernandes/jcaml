@@ -119,10 +119,6 @@ public class Calculator {
 				 * mas isso não dá problema pq eu sempre faço cast quando precisa 
 				*/
 				Variable v1 = variableFromElement(scope,first);
-				// Se for um dot, faz diferente
-				if (second.getLexem().getId()==LexemId.ACESS_DOT) {
-					
-				}
 				Variable v2 = variableFromElement(scope,third);
 				switch (second.getLexem().getId()) {
 					case OPERATOR_AND:
@@ -224,7 +220,7 @@ public class Calculator {
 	}
 
 
-	private static Variable variableFromElement(Table scope, SintaxElement sintaxElement) throws Error {
+	protected static Variable variableFromElement(Table scope, SintaxElement sintaxElement) throws Error {
 		//System.out.println("Coisa : " + sintaxElement);
 		Variable v = ExpressionEvaluator.evalue(scope, sintaxElement);
 		return v;

@@ -56,6 +56,7 @@ public class Error extends Exception {
 			case 23: message = "Variable "; break;
 			case 24: message = "Function "; break;
 			case 25: message = "Incompatiple types"; break;
+			case 26: message = "Variable of type "; break;
 				//...
 			default: message = "Unknown error";
 		}

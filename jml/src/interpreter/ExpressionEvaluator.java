@@ -176,8 +176,22 @@ public class ExpressionEvaluator {
 					break;
 					
 				case ID:
-					String vName = current.getLexem().getLex();
-					r = scope.getElement(vName);
+					if (current.getLexems()!=null) {
+						SintaxElement first = current.getLexems().get(0);
+						SintaxElement third = current.getLexems().get(2);
+						String fieldName = third.getLexem().getLex();
+						Variable v1 = Calculator.variableFromElement(scope,first);
+						Variable vz = null;
+						List l1 = (List)v1.getValue();
+						for (int lc=0;lc<l1.size();lc++) {
+							if (((Variable)l1.get(lc)).getName().compareTo(fieldName)==0) {
+								return (Variable) l1.get(lc);
+							}
+						}
+					} else {
+						String vName = current.getLexem().getLex();
+						r = scope.getElement(vName);
+					}
 					break;
 					
 				case EXP:
@@ -193,16 +207,6 @@ public class ExpressionEvaluator {
 					List<SintaxElement> operandosConst = new LinkedList<SintaxElement>();
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
-						
-						// Se for um nome e o anterior for um operador ., deixa passar o id
-						if (operandos.get(a).getId()==SintaxElementId.ID && operandos.get(a).getLexems()!=null) {
-							// Colocar os 3 na lista, se fodam
-							List wee = operandos.get(a).getLexems();
-							for (int haha=0; haha<wee.size();haha++) {
-								operandosConst.add((SintaxElement)wee.get(haha));
-							}
-							continue;
-						}
 						
 						// Se não for operador e nem consta, transformar para CONST
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
