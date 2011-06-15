@@ -72,6 +72,13 @@ public class ExpressionEvaluator {
 					var.setValue(reference.getValue());
 					return var;
 					
+				case DEF_TYPE: 
+					Variable varType = new Variable(current.getLexems().get(1).getLexem().getLex());
+					varType.setType(VarType.USER_TYPE);
+					varType.setAux(getFormalParameters(current));
+					scope.insert(varType);
+					return varType;
+					
 				case DEFINICAO_LOCAL:
 					// Copia o escopo
 					Table newScope = scope.clone();
@@ -187,7 +194,15 @@ public class ExpressionEvaluator {
 					for (int a=0; a<operandos.size();a++) {
 						SintaxElement fse = operandos.get(a);
 						
-						// Arrumar recursão (volta)
+						// Se for um nome e o anterior for um operador ., deixa passar o id
+						if (operandos.get(a).getId()==SintaxElementId.ID && operandos.get(a).getLexems()!=null) {
+							// Colocar os 3 na lista, se fodam
+							List wee = operandos.get(a).getLexems();
+							for (int haha=0; haha<wee.size();haha++) {
+								operandosConst.add((SintaxElement)wee.get(haha));
+							}
+							continue;
+						}
 						
 						// Se não for operador e nem consta, transformar para CONST
 						if (operandos.get(a).getId()!=SintaxElementId.OP && operandos.get(a).getId()!=SintaxElementId.CONST) {
@@ -196,10 +211,7 @@ public class ExpressionEvaluator {
 							//System.out.println(operandos.get(a));
 							Variable vr = evalue(scope,operandos.get(a));
 							//System.out.println(vr);
-							if (vr.getType()==VarType.FUNCTION_TYPE) {
-								r = vr;
-							}
-							else if (vr.getType()==VarType.LIST_TYPE) {
+							if (vr.getType()==VarType.FUNCTION_TYPE || vr.getType()==VarType.LIST_TYPE || vr.getType()==VarType.CUSTOM_TYPE || vr.getType()==VarType.USER_TYPE) {
 								r = vr;
 							} else {
 								//JOptionPane.showMessageDialog(null, scope.getElement("xs"));
@@ -236,6 +248,43 @@ public class ExpressionEvaluator {
 			// Detectar a função
 			Variable funcao = scope.getElement(funlist.get(0).getLexem().getLex());
 			
+			List<SintaxElement> formalParameters = funcao.getAux();
+			List<SintaxElement> realParameters = getRealParameters(funCall);
+			
+			// Detectar instanciação de tipo e fazer malassombra
+			if (funcao.getType()==VarType.USER_TYPE) {
+				Variable r = new Variable("");
+				r.setType(VarType.CUSTOM_TYPE);
+				Variable tipo = scope.getElement(funcao.getName());
+				//r.setAux(tipo.getAux());
+				r.setRealType(funcao.getName());
+				// Verificar o tamanho dos parametros
+				if (tipo.getAux().size()!=realParameters.size()) {
+					Error err = new Error(16);
+					err.setExtra(": "+funcao.getName() + " expected "+formalParameters.size()+" got "+realParameters.size());
+					throw err;
+				} else {
+					// Verificar o tipo dos parametros
+					// Criar lista de variáveis com os valores dos coisas
+					List<Variable> lv = new LinkedList<Variable>();
+					for (int a=0; a<tipo.getAux().size();a++) {
+						Variable vzin = evalue(scope,realParameters.get(a));
+						Variable expected = createVarFromParameter(scope, formalParameters.get(a));
+						if (vzin.getType()==expected.getType()) {
+							expected.setValue(vzin.getValue());
+							lv.add(expected);
+						} else {
+							Error err = new Error(25);
+							err.setExtra(": " + vzin.getType() + ", expected "+expected.getType());
+							throw err;
+						}
+					}
+					r.setValue(lv);
+				}
+				return r;
+			}
+			
+			
 			// Para função pre-definida
 			if (funcao.getType()==VarType.DEFAULTFUNCTION_TYPE) {
 				// Passar o escopo, os parametros reais e o nome da função
@@ -250,11 +299,6 @@ public class ExpressionEvaluator {
 					throw r;
 				}
 			}
-
-			List<SintaxElement> formalParameters = funcao.getAux();
-			List<SintaxElement> realParameters = getRealParameters(funCall);
-			//System.out.println("DEBUG" + formalParameters); // TODO aqui tá dando null
-			//System.out.println("DEBUG" + realParameters);
 			
 			if (formalParameters.size()!=realParameters.size()) {
 				Error r = new Error(16);
@@ -919,18 +963,32 @@ public class ExpressionEvaluator {
 	private static List<SintaxElement> getFormalParameters(SintaxElement fun) {
 		List<SintaxElement> l = new LinkedList<SintaxElement>();
 		
-		SintaxElement par = fun.getLexems().get(2);
-		if (par.getId()==SintaxElementId.PAR_FORMAIS) {
-			// Coloca os parametros na lista
-			l = par.getLexems();
-			// Limpar a lista, remover as virgulas
-			for (int a=0;a<l.size();a++) {
-				if (l.get(a).getId()==SintaxElementId.COMMA) {
-					l.remove(a);
-					a--;
+		if (fun.getId()==SintaxElementId.DEF_FUNCAO) {
+			SintaxElement par = fun.getLexems().get(2);
+			if (par.getId()==SintaxElementId.PAR_FORMAIS) {
+				// Coloca os parametros na lista
+				l = par.getLexems();
+				// Limpar a lista, remover as virgulas
+				for (int a=0;a<l.size();a++) {
+					if (l.get(a).getId()==SintaxElementId.COMMA) {
+						l.remove(a);
+						a--;
+					}
 				}
 			}
-		}		
+		}
+		else { // Definição de tipo
+			SintaxElement par = fun.getLexems().get(4);
+			if (par.getId()==SintaxElementId.TYPE_CAMPOS) {
+				l = par.getLexems();
+				for (int a=0;a<l.size();a++) {
+					if (l.get(a).getId()==SintaxElementId.COMMA) {
+						l.remove(a);
+						a--;
+					}
+				}
+			}
+		}
 		return l;
 	}
 

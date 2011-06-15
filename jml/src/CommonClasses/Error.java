@@ -55,6 +55,7 @@ public class Error extends Exception {
 			case 22: message = "Unexpected operator"; break;
 			case 23: message = "Variable "; break;
 			case 24: message = "Function "; break;
+			case 25: message = "Incompatiple types"; break;
 				//...
 			default: message = "Unknown error";
 		}

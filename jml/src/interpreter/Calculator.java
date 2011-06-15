@@ -119,6 +119,10 @@ public class Calculator {
 				 * mas isso não dá problema pq eu sempre faço cast quando precisa 
 				*/
 				Variable v1 = variableFromElement(scope,first);
+				// Se for um dot, faz diferente
+				if (second.getLexem().getId()==LexemId.ACESS_DOT) {
+					
+				}
 				Variable v2 = variableFromElement(scope,third);
 				switch (second.getLexem().getId()) {
 					case OPERATOR_AND:
@@ -195,7 +199,7 @@ public class Calculator {
 						String s2 = (String)v2.getValue();
 						v.setValue(s1.substring(0, s1.length()-1) + s2.substring(1,s2.length()));
 						break;
-						
+												
 						// Os dois abaixo dão erro, pois são unários
 					case OPERATOR_NOT:
 					case OPERATOR_UNARYMINUS:

@@ -20,6 +20,8 @@ public class SintaxElement {
 		case TYPE_FLOAT:
 		case TYPE_BOOL:
 		case TYPE_LIST: this.id = SintaxElementId.TIPO; break;
+		
+		//case ACESS_DOT: this.id = SintaxElementId.DOT; break;
 			
 		case KEYWORD_ARROW: this.id = SintaxElementId.KEYWORD_ARROW; break;
 		case KEYWORD_LET: this.id = SintaxElementId.KEYWORD_LET; break;
@@ -62,7 +64,7 @@ public class SintaxElement {
 		case OPERATOR_GREATERTHAN:
 		case OPERATOR_LESSEQUALTHAN:
 		case OPERATOR_GREATEREQUALTHAN:
-		case ACESS_DOT:
+		case ACESS_DOT: 
 		case OPERATOR_STRCONCAT: this.id = SintaxElementId.OP; break;
 			
 		case ASSIGNMENT: this.id = SintaxElementId.ASSIGNMENT; break;
