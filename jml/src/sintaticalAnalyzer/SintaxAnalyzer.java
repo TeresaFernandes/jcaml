@@ -185,8 +185,10 @@ public class SintaxAnalyzer {
                    if(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_IF
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCH)){return false;}
 
-                   if(stack.size()>2 && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
-                                     && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE){return false;}
+                   
+                 //comentei porque eu mudei a gramatica do <def_funcao>
+                 //if(stack.size()>2 && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
+                 //                  && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE){return false;}
 
                    
                     laux.add(0,stack.pop());
@@ -200,7 +202,7 @@ public class SintaxAnalyzer {
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 
                 //com parametros formais
-		if (stack.size()>5 && stack.get(stack.size()-1).getId()==SintaxElementId.EXP
+		if (stack.size()>5 && stack.get(stack.size()-1).getId()==SintaxElementId.E//antes era um EXP
                                    && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
                                    && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE
                                    && stack.get(stack.size()-4).getId()==SintaxElementId.PAR_FORMAIS
