@@ -39,10 +39,8 @@ public class SintaxAnalyzer {
                 
                 /*O programa sao reconhecido se tiver apenas um programa na pilha*/
 		if (stack.size()==1 && list.size()==0){
-			System.out.print("Reconheceu");
 			return stack.pop();
 		}else{
-                        System.out.print("nao reconheceu");
                         lancaExcecao();
 		}
 
@@ -329,6 +327,7 @@ public class SintaxAnalyzer {
 					|| stack.get(stack.size()-2).getId()==SintaxElementId.COMMA
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_LET
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
+                                        || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_AS
                                         || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_WITH)){return false;}
 
                     //if(stack.size()>2 && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE){return false;}
@@ -530,11 +529,9 @@ public class SintaxAnalyzer {
 		List<SintaxElement> laux=new LinkedList<SintaxElement>();
 
                 //com a palavra chave "as"
-		if(stack.size()>2 && (stack.get(stack.size()-1).getId()==SintaxElementId.CONST
-                                        || stack.get(stack.size()-1).getId()==SintaxElementId.ID
-                                        || stack.get(stack.size()-1).getId()==SintaxElementId.KEYWORD_JOKER)
+		if(stack.size()>2 && stack.get(stack.size()-3).getId()==SintaxElementId.KEYWORD_JOKER
                                   && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_AS
-                                  && stack.get(stack.size()-3).getId()==SintaxElementId.ID){
+                                  && stack.get(stack.size()-1).getId()==SintaxElementId.ID){
 
                     laux.add(0,stack.pop());
                     laux.add(0,stack.pop());
@@ -551,6 +548,7 @@ public class SintaxAnalyzer {
                     //para ser um match_var, ele deve ser precedido de "|" ou "WITH"
                     if (!(stack.size()>1 && (stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_MATCHBAR
                                             || stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_WITH))){return false;} //para certificar que se tiver mais de um match_var deve ser precedido de "with" ou |
+                    if (list.size()>0 && list.get(0).getId() == LexemId.KEYWORD_AS){return false;}
 
                     laux.add(0,stack.pop());
                     stack.push(new SintaxElement(SintaxElementId.MATCH_VAR, laux));
