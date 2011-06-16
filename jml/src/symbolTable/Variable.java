@@ -67,7 +67,7 @@ public class Variable {
 				//System.out.println("weee");
 			}
 			else {
-				// TODO clonar SintaxElement
+				v.setValue(this.value);
 			}
 		}
 		v.setType(this.type);

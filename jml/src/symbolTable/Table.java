@@ -110,8 +110,9 @@ public class Table {
 		Table c = new Table();
 		Variable v;
 		for (int a=0; a<table.size(); a++) {
-			v = table.get(a).clone();
-			c.insert(v);
+			v = table.get(a);
+			if (v.getType()!=VarType.LIST_TYPE)	c.insert(v.clone());
+			else c.insert(v);
 		}
 		
 		return c;

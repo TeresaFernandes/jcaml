@@ -131,4 +131,8 @@ public class Lexem {
 			default: return false;
 		}
 	}
+	
+	public String toString() {
+		return lex;
+	}
 }
