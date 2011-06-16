@@ -56,7 +56,8 @@ public class ExpressionEvaluator {
 				case DEF_FUNCAO: // Cria uma variável do tipo função
 					Variable v = new Variable("");
 					v.setAux(getFormalParameters(current));
-					v.setValue(current.getLexems().get(5));
+					if (!v.getAux().isEmpty()) { v.setValue(current.getLexems().get(5)); }
+					else v.setValue(current.getLexems().get(4));
 					v.setType(VarType.FUNCTION_TYPE); // Tem que arrumar o tipo depois pra n dar pau
 					return v;
 					
