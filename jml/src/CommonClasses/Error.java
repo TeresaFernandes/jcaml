@@ -58,6 +58,7 @@ public class Error extends Exception {
 			case 25: message = "Incompatiple types"; break;
 			case 26: message = "Variable of type "; break;
 			case 27: message = "Invalid Match"; break;
+			case 28: message = "Empty list"; break;
 				//...
 			default: message = "Unknown error";
 		}

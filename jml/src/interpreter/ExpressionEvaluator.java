@@ -10,9 +10,11 @@ import CommonClasses.Error;
 import symbolTable.Table;
 import symbolTable.VarType;
 import symbolTable.Variable;
+import userInterface.UI;
 
 public class ExpressionEvaluator {
-
+	static public UI ui;
+	
 	static public Variable evalue(Table scope, SintaxElement exp) throws Error {
 		Variable r = null;
 		
@@ -39,7 +41,7 @@ public class ExpressionEvaluator {
 				case PROGRAMA:
 					for (int a=0;a<current.getLexems().size();a++) {
 						r = evalue(scope,current.getLexems().get(a));
-						if (r!=null) System.out.println(r);
+						if (r!=null ) System.out.println(r.toString());
 					}
 					return r;
 			
@@ -121,6 +123,7 @@ public class ExpressionEvaluator {
 							r.setType(VarType.LIST_TYPE);
 							// Aqui o valor tem que ser alterado
 							r.setValue(parseList(current.getLexem().getLex()));
+							//JOptionPane.showMessageDialog(null, r.getValue());
 							break;
 					}
 					break;
@@ -492,13 +495,20 @@ public class ExpressionEvaluator {
 				throw r;
 			}
 			Variable v = evalue(scope,parameters.get(0));
+			//JOptionPane.showMessageDialog(null, v.getValue());
 			if (v.getType()!=VarType.LIST_TYPE) {
 					Error r = new Error(16);
 					r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.LIST_TYPE);
 					throw r;
 			} else {
 				List l = (List)v.getValue();
-				l.remove(0);
+				if (l.size()==0) {
+					Error r= new Error(28);
+					r.setExtra(". Expected at least 1 element");
+					throw r;
+				}
+				if (l.size()==1) v.setValue(new LinkedList<Lexem>());
+				else v.setValue(l.subList(1, l.size()));
 			}
 			return v;
 		}
@@ -512,6 +522,7 @@ public class ExpressionEvaluator {
 			Variable list = evalue(scope, parameters.get(1));
 			Variable newValue = evalue(scope,parameters.get(2));
 			
+			//JOptionPane.showMessageDialog(null, list.getValue());
 			// Fazer um get pra descobrir o tipo atual do elemento
 			if (id.getType()!=VarType.INT_TYPE) {
 				Error r = new Error(16);
@@ -980,9 +991,11 @@ public class ExpressionEvaluator {
 			}
 			else currentString=currentString+s.charAt(a);
 		}
+		if (!currentString.isEmpty()) {
 		Lexem l = new Lexem(currentString);
-		l.evalue();
-		list.add(l);
+			l.evalue();
+			list.add(l);
+		}
 		currentString=new String();
 		//System.out.println(list + " : " + list.size());
 		// Agora verifico se todos os tipos na lista são iguais
@@ -996,7 +1009,7 @@ public class ExpressionEvaluator {
 					throw r;
 				}
 			}
-		} // TODO parei aqui
+		}
 		return list;
 		
 	}
