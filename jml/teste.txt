@@ -68,19 +68,45 @@ let sum_elementos_duas_listas = function (l1:list,l2:list) ->
 	if length(l1) == length(l2) then
 		sum_elementos_duas_listas_aux (l1,l2,length(l1),0)
 	else
-		print("invalid sum");
+		print("invalid list sum");
 		
 let mult_elementos_duas_listas = function (l1:list,l2:list) ->
 	if length(l1) == length(l2) then
 		mult_elementos_duas_listas_aux (l1,l2,length(l1),0)
 	else
-		print("invalid mult");
-		
+		print("invalid list mult");
 
-let lista1 = [1,2,3,4,5];
+let sum_matrizes_aux = function(l1:list,l2:list,len:int,i:int) ->
+		if length(l1)==0  then
+			createList(len)
+		else
+			set(i ,  sum_matrizes_aux(removeFirst(l1),removeFirst(l2),len,i+1), sum_elementos_duas_listas(get(0,l1),get(0,l2)));
+	
+let sum_matrizes =  function(l1:list,l2:list) ->
+	if length(l1) == length(l2) then
+		sum_matrizes_aux(l1,l2,length(l1),0)
+	else
+		print ("invalid matrix sum");
+
+let mult_matrizes_aux = function(l1:list,l2:list,len:int,i:int) ->
+		//coisas
+			createList(len);
+	
+let mult_matrizes = function(l1:list,l2:list) ->
+	if length(l1) == length(l2) then
+		mult_matrizes_aux(l1,l2,length(l1),0)
+	else
+		print ("invalid matrix mult");
+
+
+let lista1 = [12,23,3,40,5];
 let lista2 = [1,2,3,4,5];
-let multi = mult_elementos_duas_listas(lista1,lista2);
-let soma = sum_elementos_duas_listas(lista1,lista2);
+//let multi = mult_elementos_duas_listas(lista1,lista2);
+//let soma = sum_elementos_duas_listas(lista1,lista2);
+
+let ll1 = [[1,2],[3,4]];
+let ll2 = [[1,2],[3,4]];
+//let soma_mat = sum_matrizes(ll1,ll2,length(ll1),0);
 
 //////////////////
 //	Problema 4	//
