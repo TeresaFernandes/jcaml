@@ -502,7 +502,6 @@ public class ExpressionEvaluator {
 					throw r;
 			} else {
 				List l = (List)v.getValue();
-				v.setValue(l.subList(1, l.size()));
 				if (l.size()==0) {
 					Error r= new Error(28);
 					r.setExtra(". Expected at least 1 element");
