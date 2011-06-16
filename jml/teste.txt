@@ -11,6 +11,7 @@ let problema1 = function (x:int, y:int,c:int) ->
 //////////////////
 //	Problema 2	//
 //////////////////
+
 let problema2_intervalo1 = function (x:int) -> 
 	if x>=0 then 
 		if x<=25 then true
@@ -34,7 +35,32 @@ let problema2_intervalo4 = function (x:int) ->
 		if x<=100 then true
 		else false
 	else false;
-	
+
+
+let teste = function (x:int) ->
+	if problema2_intervalo4(x) then
+		4
+	else
+		if problema2_intervalo3(x) then
+			3
+		else
+			if problema2_intervalo2(x) then
+				2
+			else
+				if problema2_intervalo1(x) then
+					1
+				else
+					-1;
+		
+let proc2 = function(x1:list, len:int, i:int) ->
+	if length(x1)==0 then
+		createList(len)
+	else
+		set(i,proc2(removeFirst(x1),len,i+1),teste(get(0,x1)));
+		
+		
+let llista1 = [12,23,100,40,50];
+let testeValor = proc2(llista1,length(llista1),0);
 		
 	
 
@@ -50,26 +76,28 @@ let mult_elementos = function (ll1:list)->
 	|_ ->	get(0,ll1) *. mult_elementos_(removeFirst(ll1));
 
 		
-//retorna um lista, na qual cada elemento corresponde a soma dos elementos respectivos das duas listas recebidas como parametro
+
 let sum_elementos_duas_listas_aux = function (l1:list,l2:list,len:int,i:int)->
 		if length(l1)==0  then
 			createList(len)
 		else
 			set(i ,  sum_elementos_duas_listas_aux(removeFirst(l1),removeFirst(l2),len,i+1), get(0,l1) + get(0,l2));
 		
-//retorna um lista, na qual cada elemento corresponde o produto dos elementos respectivos das duas listas recebidas como parametro
+
 let mult_elementos_duas_listas_aux = function (l1:list,l2:list,len:int, i:int)->
 		if length(l1)==0  then
 			createList(len)
 		else
 			set(i ,  mult_elementos_duas_listas_aux(removeFirst(l1),removeFirst(l2),len,i+1), get(0,l1) * get(0,l2));
-	
+			
+//retorna um lista, na qual cada elemento corresponde a soma dos elementos respectivos das duas listas recebidas como parametro	
 let sum_elementos_duas_listas = function (l1:list,l2:list) ->
 	if length(l1) == length(l2) then
 		sum_elementos_duas_listas_aux (l1,l2,length(l1),0)
 	else
 		print("invalid list sum");
 		
+//retorna um lista, na qual cada elemento corresponde o produto dos elementos respectivos das duas listas recebidas como parametro		
 let mult_elementos_duas_listas = function (l1:list,l2:list) ->
 	if length(l1) == length(l2) then
 		mult_elementos_duas_listas_aux (l1,l2,length(l1),0)
@@ -99,17 +127,6 @@ let sum_matrizes =  function(l1:list,l2:list) ->
 //let getColuna = function(l1:list,m:int) ->
 //		getColuna_aux(l1,length(get(0,l1)),0,m);
 
-
-let mult_matrizes_aux = function(l1:list,l2:list,len:int,i:int) ->
-			//coisas
-			createList(len);
-	
-let mult_matrizes = function(l1:list,l2:list) ->
-	if length(l1) == length(l2) then
-		mult_matrizes_aux(l1,l2,length(l1),0)
-	else
-		print ("invalid matrix mult");
-
 let lista1 = [12,23,3,40,5];
 let lista2 = [1,2,3,4,5];
 //let multi = mult_elementos_duas_listas(lista1,lista2);
@@ -117,8 +134,6 @@ let lista2 = [1,2,3,4,5];
 
 let ll1 = [[1,2],[3,4]];
 let ll2 = [[1,2],[3,4]];
-//let soma_mat = sum_matrizes(ll1,ll2,length(ll1),0);
-//let col = getColuna(lista1,0);
 
 
 //////////////////
