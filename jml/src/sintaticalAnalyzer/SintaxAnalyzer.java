@@ -219,7 +219,7 @@ public class SintaxAnalyzer {
                     return true;
 		}
                 //sem parametros formais
-                if (stack.size()>4 && stack.get(stack.size()-1).getId()==SintaxElementId.EXP
+                if (stack.size()>4 && stack.get(stack.size()-1).getId()==SintaxElementId.E//EXP
                                    && stack.get(stack.size()-2).getId()==SintaxElementId.KEYWORD_ARROW
                                    && stack.get(stack.size()-3).getId()==SintaxElementId.BRACKET_CLOSE
                                    && stack.get(stack.size()-4).getId()==SintaxElementId.BRACKET_OPEN

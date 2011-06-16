@@ -35,6 +35,12 @@ let problema2_intervalo4 = function (x:int) ->
 	else false;
 	
 
+//////////////////
+//	Problema 3	//
+//////////////////
+
+let x = function() -> 1;
+
 
 //////////////////
 //	Problema 4	//
