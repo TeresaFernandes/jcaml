@@ -485,7 +485,23 @@ public class ExpressionEvaluator {
 			}
 			return v;
 		}
-		
+		else if (name.compareToIgnoreCase("removeFirst")==0){
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 1 got "+ parameters.size());
+				throw r;
+			}
+			Variable v = evalue(scope,parameters.get(0));
+			if (v.getType()!=VarType.LIST_TYPE) {
+					Error r = new Error(16);
+					r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.LIST_TYPE);
+					throw r;
+			} else {
+				List l = (List)v.getValue();
+				l.remove(0);
+			}
+			return v;
+		}
 		else if (name.compareToIgnoreCase("set")==0) { 
 			if (parameters.size()!=3) { // Numero inválido de parametros
 				Error r = new Error(16);
