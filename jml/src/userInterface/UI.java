@@ -177,8 +177,7 @@ public class UI extends javax.swing.JFrame {
     }
 
     private void resetActionPerformed(java.awt.event.ActionEvent evt) {
-        table=new Table();
-        update();
+        Analyzer.s = new Table();
     }
 
     private void update() {
