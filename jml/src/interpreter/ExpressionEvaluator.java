@@ -10,10 +10,10 @@ import CommonClasses.Error;
 import symbolTable.Table;
 import symbolTable.VarType;
 import symbolTable.Variable;
-//import userInterface.UI;
+import userInterface.UI;
 
 public class ExpressionEvaluator {
-	//static public UI ui;
+	static public UI ui;
 	
 	static public Variable evalue(Table scope, SintaxElement exp) throws Error {
 		Variable r = null;
@@ -41,7 +41,8 @@ public class ExpressionEvaluator {
 				case PROGRAMA:
 					for (int a=0;a<current.getLexems().size();a++) {
 						r = evalue(scope,current.getLexems().get(a));
-						if (r!=null ) System.out.println(r.toString());
+						if (r!=null && ui!=null && ui.isVisible()) ui.println(r.toString());
+						else if (r!=null) System.out.println(r.toString());
 					}
 					return r;
 			

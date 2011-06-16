@@ -18,8 +18,8 @@ public class SintaxAnalyzer {
 
 	public static SintaxElement parseLexems(List<Lexem> l) throws Error {
 
-		if (list==null)list=l;
-		if (stack==null)stack=new Stack<SintaxElement>();
+		list=l;
+		stack=new Stack<SintaxElement>();
 
                 /*enquanto tiver elemento na lista e ninguem reconhecer
                 algum lexema um novo elemento da lista � inserido na pilha.
