@@ -469,14 +469,19 @@ public class ExpressionEvaluator {
 				throw r;
 			}
 			Variable v = evalue(scope,parameters.get(0));
-			if (v.getType()!=VarType.STRING_TYPE) {
-				Error r = new Error(16);
-				r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
-				throw r;
+			if (v.getType()!=VarType.STRING_TYPE && v.getType()!=VarType.LIST_TYPE) {
+					Error r = new Error(16);
+					r.setExtra(" in fuction "+name + ". Got a " + v.getType() + ", expected " + VarType.STRING_TYPE);
+					throw r;
 			} else {
-				int l = ((String) v.getValue()).length();
-				v.setValue(String.valueOf(l-2)); // -2 pq tem que tirar as "
-				v.setType(VarType.INT_TYPE);
+				if (v.getType()==VarType.STRING_TYPE) {
+					int l = ((String) v.getValue()).length();
+					v.setValue(String.valueOf(l-2)); // -2 pq tem que tirar as "
+					v.setType(VarType.INT_TYPE);
+				} else { // Lista
+					v.setValue(String.valueOf(((List)v.getValue()).size()));
+					v.setType(VarType.INT_TYPE);
+				}
 			}
 			return v;
 		}
