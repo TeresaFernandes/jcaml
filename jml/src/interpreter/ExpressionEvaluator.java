@@ -544,7 +544,7 @@ public class ExpressionEvaluator {
 			Variable id = evalue(scope, parameters.get(0));
 			Variable list = evalue(scope, parameters.get(1));
 			Variable newValue = evalue(scope,parameters.get(2));
-			
+
 			//JOptionPane.showMessageDialog(null, list.getValue());
 			// Fazer um get pra descobrir o tipo atual do elemento
 			if (id.getType()!=VarType.INT_TYPE) {
@@ -570,7 +570,25 @@ public class ExpressionEvaluator {
 					}
 					realLexem.evalue();
 					oldValue = evalue(scope,new SintaxElement(realLexem));
-					if (newValue.getType()==oldValue.getType() || oldValue.getType()==VarType.UNKNOWN) {
+					if (newValue.getType()==VarType.LIST_TYPE && oldValue.getType()==VarType.LIST_TYPE) {
+						String lex = "[";
+
+						List newList = (List)newValue.getValue();
+						// TODO ALGUMA BIZARRICE AKI TA ME FAZENDO PERDER O VALOR QUE DEVO COLOCAR
+						// LÁ NA LISTA
+						for (int a=0; a<newList.size();a++) {
+							lex = lex + (lex.length()==1?"" : ",") + (Lexem)newList.get(a);
+						}
+						lex = lex + "]";
+						
+						//JOptionPane.showMessageDialog(null, lex);
+						realLexem = new Lexem(lex);
+						realLexem.evalue();
+						//JOptionPane.showMessageDialog(null, realLexem);
+						((List)list.getValue()).set(realId, realLexem);
+						return list;
+					}
+					else if (newValue.getType()==oldValue.getType() || oldValue.getType()==VarType.UNKNOWN) {
 						Lexem newLex = new Lexem((String)newValue.getValue());
 						((List)list.getValue()).set(realId, newLex);
 						return list;

@@ -27,12 +27,8 @@ import symbolTable.Table;
  * @author Eduardo
  */
 public class UI extends javax.swing.JFrame {
-    private Table table;
-
-	
     public UI() {
         initComponents();
-        table = new Table();
     }
 
     /** This method is called from within the constructor to
@@ -228,6 +224,8 @@ public class UI extends javax.swing.JFrame {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			println("# " + e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
     }
 
