@@ -13,6 +13,7 @@ public class Table {
 		
 		Variable v1;
 		
+		v1 = new Variable("createList"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("removeFirst"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("set"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);
 		v1 = new Variable("get"); v1.setType(VarType.DEFAULTFUNCTION_TYPE); v1.setValue("funcao"); table.add(v1);

@@ -512,6 +512,28 @@ public class ExpressionEvaluator {
 			}
 			return v;
 		}
+		else if (name.compareToIgnoreCase("createList")==0) {
+			if (parameters.size()!=1) { // Numero inválido de parametros
+				Error r = new Error(16);
+				r.setExtra(". Expected 3 got "+ parameters.size());
+				throw r;
+			}
+			int id = Integer.parseInt((String)evalue(scope,parameters.get(0)).getValue());
+			if (id<1) {
+				Error r= new Error(123);
+				r.setExtra(". Tentando burlar a gambiarra? Use um valor maior que 0 para o createList");
+				throw r;
+			}
+			String list="[0";
+			for (int a=1;a<id;a++) {
+				list=list+",0";
+			}
+			list = list+"]";
+			Lexem lex = new Lexem(list);
+			lex.evalue();
+			SintaxElement s_e = new SintaxElement(lex);
+			return evalue(scope,s_e);
+		}
 		else if (name.compareToIgnoreCase("set")==0) { 
 			if (parameters.size()!=3) { // Numero inválido de parametros
 				Error r = new Error(16);
@@ -547,7 +569,7 @@ public class ExpressionEvaluator {
 					}
 					realLexem.evalue();
 					oldValue = evalue(scope,new SintaxElement(realLexem));
-					if (newValue.getType()==oldValue.getType()) {
+					if (newValue.getType()==oldValue.getType() || oldValue.getType()==VarType.UNKNOWN) {
 						Lexem newLex = new Lexem((String)newValue.getValue());
 						((List)list.getValue()).set(realId, newLex);
 						return list;
