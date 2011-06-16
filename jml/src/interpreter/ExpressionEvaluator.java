@@ -10,10 +10,10 @@ import CommonClasses.Error;
 import symbolTable.Table;
 import symbolTable.VarType;
 import symbolTable.Variable;
-import userInterface.UI;
+//import userInterface.UI;
 
 public class ExpressionEvaluator {
-	static public UI ui;
+	//static public UI ui;
 	
 	static public Variable evalue(Table scope, SintaxElement exp) throws Error {
 		Variable r = null;

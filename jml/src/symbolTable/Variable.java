@@ -67,7 +67,7 @@ public class Variable {
 				//System.out.println("weee");
 			}
 			else {
-				v.setValue(this.value);
+				//v.setValue(this.value);
 			}
 		}
 		v.setType(this.type);
